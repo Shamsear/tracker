@@ -21,13 +21,11 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const projects = await getAllProjects();
-
   return (
     <html lang="en">
       <head>
@@ -39,7 +37,7 @@ export default async function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-slate-50 text-slate-900 antialiased">
-        <Navigation projects={projects} />
+        <Navigation />
         <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           {children}
         </main>

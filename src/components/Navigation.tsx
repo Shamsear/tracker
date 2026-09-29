@@ -16,10 +16,10 @@ import {
 import { Project } from '@/lib/ledger';
 
 interface NavigationProps {
-  projects: Project[];
+  projects?: Project[];
 }
 
-export function Navigation({ projects }: NavigationProps) {
+export function Navigation({ projects }: NavigationProps = {}) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 

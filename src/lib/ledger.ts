@@ -83,25 +83,54 @@ export interface GlobalDashboardStats {
 export async function getAllProjects(): Promise<Project[]> {
   try {
     await ensureDbSeeded();
-    return await prisma.project.findMany({
+    const projects = await prisma.project.findMany({
       orderBy: { name: 'asc' },
     });
-  } catch (err) {
-    console.error('Error in getAllProjects:', err);
-    return [];
+    if (projects.length > 0) return projects;
+  } catch (err: any) {
+    console.warn('Prisma project query failed, using offline fallback:', err?.message);
   }
+  return getFallbackProjects();
 }
 
 export async function getProjectById(id: string): Promise<Project | null> {
   try {
     await ensureDbSeeded();
-    return await prisma.project.findUnique({
+    const project = await prisma.project.findUnique({
       where: { id },
     });
-  } catch (err) {
-    console.error(`Error in getProjectById(${id}):`, err);
-    return null;
+    if (project) return project;
+  } catch (err: any) {
+    console.warn(`Prisma getProjectById(${id}) query failed:`, err?.message);
   }
+  const fallback = getFallbackProjects().find((p) => p.id === id);
+  return fallback || null;
+}
+
+function getFallbackProjects(): Project[] {
+  return [
+    { id: 'sadia', name: 'Sadia', code: 'SADIA', category: 'Project', color: '#dc2626', createdAt: new Date() },
+    { id: 'lesieur', name: 'Lesieur', code: 'LESIEUR', category: 'Project', color: '#ea580c', createdAt: new Date() },
+    { id: 'listerine', name: 'Listerine', code: 'LISTERINE', category: 'Project', color: '#0284c7', createdAt: new Date() },
+    { id: 'remarkable', name: 'reMARKABLE', code: 'REMARKABLE', category: 'Project', color: '#4f46e5', createdAt: new Date() },
+    { id: 'india-gate', name: 'India Gate', code: 'INDIA_GATE', category: 'Project', color: '#16a34a', createdAt: new Date() },
+    { id: 'la-lushe', name: 'LA LUSHE', code: 'LA_LUSHE', category: 'Project', color: '#db2777', createdAt: new Date() },
+    { id: 'jbaby', name: 'Jbaby', code: 'JBABY', category: 'Project', color: '#0891b2', createdAt: new Date() },
+    { id: 'energizer', name: 'Energizer', code: 'ENERGIZER', category: 'Project', color: '#eab308', createdAt: new Date() },
+    { id: 'french-apple', name: 'French Apple', code: 'FRENCH_APPLE', category: 'Project', color: '#84cc16', createdAt: new Date() },
+    { id: 'colgate', name: 'Colgate', code: 'COLGATE', category: 'Project', color: '#e11d48', createdAt: new Date() },
+    { id: 'aveeno', name: 'Aveeno', code: 'AVEENO', category: 'Project', color: '#65a30d', createdAt: new Date() },
+    { id: 'french-cheese', name: 'French Cheese', code: 'FRENCH_CHEESE', category: 'Project', color: '#f59e0b', createdAt: new Date() },
+    { id: 'kenvue', name: 'Kenvue / NTG', code: 'KENVUE', category: 'Project', color: '#059669', createdAt: new Date() },
+    { id: 'usa-cheese', name: 'USA Cheese', code: 'USA_CHEESE', category: 'Project', color: '#d97706', createdAt: new Date() },
+    { id: 'taste-of-dubai', name: 'Taste Of Dubai', code: 'TASTE_OF_DUBAI', category: 'Event', color: '#9333ea', createdAt: new Date() },
+    { id: 'pinar', name: 'Pinar', code: 'PINAR', category: 'Project', color: '#2563eb', createdAt: new Date() },
+    { id: 'stayfree', name: 'Stayfree', code: 'STAYFREE', category: 'Project', color: '#c026d3', createdAt: new Date() },
+    { id: 'ogx', name: 'OGX', code: 'OGX', category: 'Project', color: '#475569', createdAt: new Date() },
+    { id: 'van-expenses', name: 'Van Expenses', code: 'VAN_EXPENSES', category: 'Logistics', color: '#0284c7', createdAt: new Date() },
+    { id: 'van-renewal', name: 'Van Renewal Expenses', code: 'VAN_RENEWAL', category: 'Logistics', color: '#0d9488', createdAt: new Date() },
+    { id: 'warehouse-petty-cash', name: 'Warehouse Petty Cash', code: 'WAREHOUSE_PETTY_CASH', category: 'Petty Cash', color: '#7c3aed', createdAt: new Date() },
+  ];
 }
 
 export async function getProjectLedger(projectId: string): Promise<{
@@ -111,23 +140,39 @@ export async function getProjectLedger(projectId: string): Promise<{
   expenses: Expense[];
 }> {
   await ensureDbSeeded();
-  const project = await prisma.project.findUnique({
-    where: { id: projectId },
-  });
+  let project: Project | null = null;
+  let receipts: FundReceipt[] = [];
+  let expenses: Expense[] = [];
 
-  if (!project) {
-    throw new Error(`Project ${projectId} not found`);
+  try {
+    project = await prisma.project.findUnique({
+      where: { id: projectId },
+    });
+
+    if (project) {
+      receipts = await prisma.fundReceipt.findMany({
+        where: { projectId },
+        orderBy: [{ receivedDate: 'asc' }, { createdAt: 'asc' }],
+      });
+
+      expenses = await prisma.expense.findMany({
+        where: { projectId },
+        orderBy: [{ expenseDate: 'asc' }, { createdAt: 'asc' }],
+      });
+    }
+  } catch (err: any) {
+    console.warn(`Database query for project ${projectId} failed, using local fallback:`, err?.message);
   }
 
-  const receipts = await prisma.fundReceipt.findMany({
-    where: { projectId },
-    orderBy: [{ receivedDate: 'asc' }, { createdAt: 'asc' }],
-  });
-
-  const expenses = await prisma.expense.findMany({
-    where: { projectId },
-    orderBy: [{ expenseDate: 'asc' }, { createdAt: 'asc' }],
-  });
+  if (!project) {
+    project = getFallbackProjects().find((p) => p.id === projectId) || {
+      id: projectId,
+      name: projectId.replace(/-/g, ' ').toUpperCase(),
+      code: projectId.toUpperCase().replace(/-/g, '_'),
+      category: 'Project',
+      createdAt: new Date(),
+    };
+  }
 
   type UnifiedItem = {
     type: 'fund' | 'expense';

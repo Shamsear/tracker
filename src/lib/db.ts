@@ -6,9 +6,20 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
+const getDatabaseUrl = () => {
+  return process.env.DATABASE_URL || '';
+};
+
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
+    datasources: process.env.DATABASE_URL
+      ? {
+          db: {
+            url: process.env.DATABASE_URL,
+          },
+        }
+      : undefined,
     log: ['error'],
   });
 
@@ -16,8 +27,9 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
 export async function ensureDbSeeded() {
   try {
-    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes('ep-your-database')) {
-      console.warn('DATABASE_URL is not set or using placeholder.');
+    const dbUrl = process.env.DATABASE_URL;
+    if (!dbUrl || dbUrl.includes('ep-your-database')) {
+      console.warn('DATABASE_URL is not configured. Fallback mode enabled.');
       return;
     }
     const count = await prisma.project.count();
@@ -25,7 +37,7 @@ export async function ensureDbSeeded() {
       await seedFromInitialData();
     }
   } catch (err: any) {
-    console.warn('Database seeding check skipped (DB may be offline during build):', err.message);
+    console.warn('Database seeding check skipped (DB offline or unreachable):', err.message);
   }
 }
 

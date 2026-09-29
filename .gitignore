@@ -20,6 +20,16 @@
 # production
 /build
 
+# SQLite databases
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# agent / ide internals
+.claude/
+agent/
+
 # misc
 .DS_Store
 *.pem
@@ -30,7 +40,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
 .env*
 
 # vercel

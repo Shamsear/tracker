@@ -128,74 +128,78 @@ export function ProjectLedgerView({
         <div className={`rounded-2xl border-2 p-4 shadow-sm ${
           isHealthy ? 'border-emerald-300 bg-emerald-50' : 'border-rose-300 bg-rose-50'
         }`}>
-          <span className="text-xs font-black uppercase tracking-wider text-slate-900 block">
+          <span className="text-xs font-black uppercase tracking-wider text-slate-900 block whitespace-nowrap">
             Current Balance
           </span>
-          <div className="mt-1 flex items-baseline gap-1.5 font-mono">
+          <div className="mt-1 flex items-baseline gap-1.5 font-mono whitespace-nowrap">
             <span className="text-xs font-black text-slate-700">AED</span>
             <div className={`text-2xl sm:text-3xl font-black tracking-tight tabular-nums ${
               isHealthy ? 'text-emerald-800' : 'text-rose-800'
             }`}>
               <NumberFlow
+                locales="en-US"
                 value={summary.currentBalance}
                 format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
               />
             </div>
           </div>
-          <span className="mt-1 block text-xs font-bold text-slate-700">
+          <span className="mt-1 block text-xs font-bold text-slate-700 whitespace-nowrap">
             {isHealthy ? 'Available Credit' : 'Deficit / Overdrawn'}
           </span>
         </div>
 
         {/* Total Inflows */}
         <div className="rounded-2xl border-2 border-slate-300 bg-white p-4 shadow-sm">
-          <span className="text-xs font-black uppercase tracking-wider text-slate-900 block">
+          <span className="text-xs font-black uppercase tracking-wider text-slate-900 block whitespace-nowrap">
             Total Funds Inflow
           </span>
-          <div className="mt-1 flex items-baseline gap-1.5 font-mono text-2xl sm:text-3xl font-black tracking-tight tabular-nums text-emerald-700">
+          <div className="mt-1 flex items-baseline gap-1.5 font-mono text-2xl sm:text-3xl font-black tracking-tight tabular-nums text-emerald-700 whitespace-nowrap">
             <span className="text-xs font-black text-slate-700">AED</span>
             <NumberFlow
+              locales="en-US"
               value={summary.totalReceived}
               format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
             />
           </div>
-          <span className="mt-1 flex items-center gap-1 text-xs font-bold text-slate-700">
-            <NumberFlow value={summary.receiptCount} /> receipts credited
+          <span className="mt-1 flex items-center gap-1 text-xs font-bold text-slate-700 whitespace-nowrap">
+            <NumberFlow locales="en-US" value={summary.receiptCount} /> receipts credited
           </span>
         </div>
 
         {/* Total Spent */}
         <div className="rounded-2xl border-2 border-slate-300 bg-white p-4 shadow-sm">
-          <span className="text-xs font-black uppercase tracking-wider text-slate-900 block">
+          <span className="text-xs font-black uppercase tracking-wider text-slate-900 block whitespace-nowrap">
             Total Spent (Inc. VAT)
           </span>
-          <div className="mt-1 flex items-baseline gap-1.5 font-mono text-2xl sm:text-3xl font-black tracking-tight tabular-nums text-slate-950">
+          <div className="mt-1 flex items-baseline gap-1.5 font-mono text-2xl sm:text-3xl font-black tracking-tight tabular-nums text-slate-950 whitespace-nowrap">
             <span className="text-xs font-black text-slate-700">AED</span>
             <NumberFlow
+              locales="en-US"
               value={summary.totalSpentWithVat}
               format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
             />
           </div>
-          <div className="mt-1 flex items-center gap-1 text-xs font-mono font-bold text-slate-700">
-            <span>Base: <NumberFlow value={summary.totalSpentBase} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} /></span>
-            <span>+ VAT: <NumberFlow value={summary.totalVat} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} /></span>
+          <div className="mt-1 flex items-center justify-between gap-1 text-xs font-mono font-bold text-slate-700 whitespace-nowrap">
+            <span>Base: AED <NumberFlow locales="en-US" value={summary.totalSpentBase} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} /></span>
+            <span className="text-emerald-800">+VAT: AED <NumberFlow locales="en-US" value={summary.totalVat} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} /></span>
           </div>
         </div>
 
         {/* Pending Clearance */}
         <div className="rounded-2xl border-2 border-amber-300 bg-amber-50 p-4 shadow-sm">
-          <span className="text-xs font-black uppercase tracking-wider text-amber-950 block">
+          <span className="text-xs font-black uppercase tracking-wider text-amber-950 block whitespace-nowrap">
             Pending Bills
           </span>
-          <div className="mt-1 flex items-baseline gap-1.5 font-mono text-2xl sm:text-3xl font-black tracking-tight tabular-nums text-amber-950">
+          <div className="mt-1 flex items-baseline gap-1.5 font-mono text-2xl sm:text-3xl font-black tracking-tight tabular-nums text-amber-950 whitespace-nowrap">
             <span className="text-xs font-black text-amber-900">AED</span>
             <NumberFlow
+              locales="en-US"
               value={summary.pendingBillsAmount}
               format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
             />
           </div>
-          <span className="mt-1 flex items-center gap-1 text-xs font-bold text-amber-950">
-            <NumberFlow value={summary.pendingBillsCount} /> bills unsubmitted
+          <span className="mt-1 flex items-center gap-1 text-xs font-bold text-amber-950 whitespace-nowrap">
+            <NumberFlow locales="en-US" value={summary.pendingBillsCount} /> bills unsubmitted
           </span>
         </div>
 
@@ -309,30 +313,30 @@ export function ProjectLedgerView({
                       )}
                     </td>
 
-                    <td className="py-3.5 px-4 text-right tabular-nums text-slate-800 font-bold">
+                    <td className="py-3.5 px-4 text-right tabular-nums text-slate-800 font-bold whitespace-nowrap">
                       {!isFund && row.amount > 0 ? (
-                        <NumberFlow value={row.amount} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
+                        <NumberFlow locales="en-US" value={row.amount} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
                       ) : '-'}
                     </td>
 
-                    <td className="py-3.5 px-4 text-right tabular-nums text-slate-700 font-bold">
+                    <td className="py-3.5 px-4 text-right tabular-nums text-slate-700 font-bold whitespace-nowrap">
                       {!isFund && row.vat_amount > 0 ? (
                         <span className="text-emerald-800 font-black">
-                          +<NumberFlow value={row.vat_amount} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
+                          +<NumberFlow locales="en-US" value={row.vat_amount} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
                         </span>
                       ) : '-'}
                     </td>
 
-                    <td className="py-3.5 px-4 text-right tabular-nums font-black text-slate-950">
+                    <td className="py-3.5 px-4 text-right tabular-nums font-black text-slate-950 whitespace-nowrap">
                       {!isFund ? (
                         <div className="flex items-center justify-end gap-1">
                           <span className="text-slate-700">AED</span>
-                          <NumberFlow value={row.total_amount} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
+                          <NumberFlow locales="en-US" value={row.total_amount} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
                         </div>
                       ) : '-'}
                     </td>
 
-                    <td className="py-3.5 px-4 text-center">
+                    <td className="py-3.5 px-4 text-center whitespace-nowrap">
                       {!isFund && row.bill_status && (
                         <button
                           onClick={() => handleStatusChange(row.id, row.bill_status!)}
@@ -357,21 +361,21 @@ export function ProjectLedgerView({
                       )}
                     </td>
 
-                    <td className="py-3.5 px-4 text-right tabular-nums font-black text-emerald-800">
+                    <td className="py-3.5 px-4 text-right tabular-nums font-black text-emerald-800 whitespace-nowrap">
                       {isFund ? (
                         <div className="flex items-center justify-end gap-1">
                           <span>+AED</span>
-                          <NumberFlow value={row.received} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
+                          <NumberFlow locales="en-US" value={row.received} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
                         </div>
                       ) : '-'}
                     </td>
 
-                    <td className={`py-3.5 px-4 text-right tabular-nums font-black ${
+                    <td className={`py-3.5 px-4 text-right tabular-nums font-black whitespace-nowrap ${
                       isDeficit ? 'text-rose-700' : 'text-slate-950'
                     }`}>
                       <div className="flex items-center justify-end gap-1">
                         <span className="text-slate-700">AED</span>
-                        <NumberFlow value={row.balance} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
+                        <NumberFlow locales="en-US" value={row.balance} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
                       </div>
                     </td>
 
@@ -423,26 +427,27 @@ export function ProjectLedgerView({
                 }`}
               >
                 <div className="flex items-start justify-between gap-2">
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <span className="font-mono text-xs font-bold text-slate-600 block">{row.date}</span>
-                    <span className="font-black text-sm text-slate-950 block mt-0.5">
+                    <span className="font-black text-sm text-slate-950 block mt-0.5 truncate">
                       {row.purpose}
                     </span>
                   </div>
 
-                  <div className="text-right font-mono">
-                    <div className={`text-base font-black tabular-nums flex items-center justify-end gap-1 ${
+                  <div className="text-right font-mono shrink-0">
+                    <div className={`text-base font-black tabular-nums flex items-center justify-end gap-1 whitespace-nowrap ${
                       isFund ? 'text-emerald-800' : 'text-slate-950'
                     }`}>
                       <span>{isFund ? '+AED' : '-AED'}</span>
                       <NumberFlow 
+                        locales="en-US"
                         value={isFund ? row.received : row.total_amount} 
                         format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} 
                       />
                     </div>
                     {!isFund && row.vat_amount > 0 && (
-                      <span className="block text-[11px] font-bold text-slate-700">
-                        Base: {row.amount.toFixed(2)} + VAT: {row.vat_amount.toFixed(2)}
+                      <span className="block text-[11px] font-bold text-slate-700 whitespace-nowrap">
+                        Base: {row.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} + VAT: {row.vat_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
                     )}
                   </div>
@@ -450,18 +455,18 @@ export function ProjectLedgerView({
 
                 <div className="mt-3 flex items-center justify-between border-t-2 border-slate-200 pt-2.5 text-xs font-mono">
                   <div>
-                    <span className="text-slate-700 text-[10px] font-black uppercase block">Running Balance</span>
-                    <div className={`tabular-nums font-black flex items-center gap-1 ${isDeficit ? 'text-rose-700' : 'text-slate-950'}`}>
+                    <span className="text-slate-700 text-[10px] font-black uppercase block whitespace-nowrap">Running Balance</span>
+                    <div className={`tabular-nums font-black flex items-center gap-1 whitespace-nowrap ${isDeficit ? 'text-rose-700' : 'text-slate-950'}`}>
                       <span>AED</span>
-                      <NumberFlow value={row.balance} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
+                      <NumberFlow locales="en-US" value={row.balance} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 shrink-0">
                     {!isFund && row.bill_status && (
                       <button
                         onClick={() => handleStatusChange(row.id, row.bill_status!)}
-                        className={`rounded-lg px-2.5 py-1 text-[10px] font-black uppercase border-2 ${
+                        className={`rounded-lg px-2.5 py-1 text-[10px] font-black uppercase border-2 whitespace-nowrap ${
                           row.bill_status === 'Closed'
                             ? 'bg-slate-200 text-slate-800 border-slate-400'
                             : 'bg-amber-100 text-amber-950 border-amber-400'

@@ -109,15 +109,16 @@ export function SupervisorPettyCashView({
                 <div className={`mt-5 rounded-xl p-4 border-2 ${
                   isHealthy ? 'bg-slate-50 border-slate-200' : 'bg-rose-50 border-rose-300'
                 }`}>
-                  <span className="text-xs font-black uppercase tracking-wider text-slate-700 block">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-700 block whitespace-nowrap">
                     Available Float
                   </span>
-                  <div className="mt-1 flex items-baseline gap-1.5 font-mono">
+                  <div className="mt-1 flex items-baseline gap-1.5 font-mono whitespace-nowrap">
                     <span className="text-xs font-black text-slate-700">AED</span>
                     <div className={`text-3xl font-black tracking-tight tabular-nums ${
                       isHealthy ? 'text-slate-950' : 'text-rose-700'
                     }`}>
                       <NumberFlow
+                        locales="en-US"
                         value={balance}
                         format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
                       />
@@ -128,20 +129,22 @@ export function SupervisorPettyCashView({
                 {/* Sub Metrics */}
                 <div className="mt-4 grid grid-cols-2 gap-3 border-t-2 border-slate-200 pt-3 text-xs font-mono">
                   <div>
-                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-700 block">Float Credited</span>
-                    <div className="flex items-center gap-1 font-black text-emerald-800 text-sm mt-0.5">
+                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-700 block whitespace-nowrap">Float Credited</span>
+                    <div className="flex items-center gap-1 font-black text-emerald-800 text-sm mt-0.5 whitespace-nowrap">
                       <span>AED</span>
                       <NumberFlow
+                        locales="en-US"
                         value={s?.totalReceived || 0}
                         format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
                       />
                     </div>
                   </div>
                   <div>
-                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-700 block">Bills Settled</span>
-                    <div className="flex items-center gap-1 font-black text-slate-950 text-sm mt-0.5">
+                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-700 block whitespace-nowrap">Bills Settled</span>
+                    <div className="flex items-center gap-1 font-black text-slate-950 text-sm mt-0.5 whitespace-nowrap">
                       <span>AED</span>
                       <NumberFlow
+                        locales="en-US"
                         value={s?.totalSpentWithVat || 0}
                         format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
                       />
@@ -155,14 +158,14 @@ export function SupervisorPettyCashView({
                 <div className="flex items-center gap-2">
                   <Link
                     href={`/transactions/new?projectId=${acc.id}&mode=fund`}
-                    className="inline-flex items-center gap-1 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition-colors shadow-xs"
+                    className="inline-flex items-center gap-1 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition-colors shadow-xs whitespace-nowrap"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     Top-up Float
                   </Link>
                   <Link
                     href={`/transactions/new?projectId=${acc.id}&mode=expense`}
-                    className="inline-flex items-center gap-1 rounded-xl bg-rose-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-rose-700 transition-colors shadow-xs"
+                    className="inline-flex items-center gap-1 rounded-xl bg-rose-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-rose-700 transition-colors shadow-xs whitespace-nowrap"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     Settle Bill
@@ -171,7 +174,7 @@ export function SupervisorPettyCashView({
 
                 <Link
                   href={`/projects/${acc.id}`}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-bold text-white hover:bg-slate-800 shadow-xs"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-bold text-white hover:bg-slate-800 shadow-xs whitespace-nowrap"
                 >
                   <span>Ledger</span>
                   <ArrowUpRight className="h-4 w-4 text-slate-300" />

@@ -82,20 +82,20 @@ export function ProjectGrid({ summaries }: ProjectGridProps) {
               <div>
                 {/* Header */}
                 <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-2.5 min-w-0">
                     <span 
                       className="h-4 w-4 rounded-full shrink-0 shadow-xs border border-slate-300" 
                       style={{ backgroundColor: summary.project.color || '#2563eb' }}
                     />
                     <Link
                       href={`/projects/${summary.project.id}`}
-                      className="text-base font-black tracking-tight text-slate-950 group-hover:text-blue-700 transition-colors"
+                      className="text-base font-black tracking-tight text-slate-950 group-hover:text-blue-700 transition-colors truncate"
                     >
                       {summary.project.name}
                     </Link>
                   </div>
 
-                  <span className="rounded-lg bg-slate-200 border border-slate-300 px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wider text-slate-900">
+                  <span className="rounded-lg bg-slate-200 border border-slate-300 px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wider text-slate-900 shrink-0 whitespace-nowrap">
                     {summary.project.category}
                   </span>
                 </div>
@@ -104,15 +104,16 @@ export function ProjectGrid({ summaries }: ProjectGridProps) {
                 <div className={`mt-4 rounded-xl p-4 border-2 transition-all ${
                   isDeficit ? 'bg-rose-50 border-rose-300' : 'bg-slate-50 border-slate-200'
                 }`}>
-                  <span className="text-xs font-black uppercase tracking-wider text-slate-700 block">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-700 block whitespace-nowrap">
                     Available Balance
                   </span>
-                  <div className="mt-1 flex items-baseline gap-1.5 font-mono">
+                  <div className="mt-1 flex items-baseline gap-1.5 font-mono whitespace-nowrap">
                     <span className="text-xs font-black text-slate-700">AED</span>
                     <div className={`text-2xl sm:text-3xl font-black tracking-tight tabular-nums ${
                       isDeficit ? 'text-rose-700' : 'text-slate-950'
                     }`}>
                       <NumberFlow
+                        locales="en-US"
                         value={summary.currentBalance}
                         format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
                       />
@@ -133,20 +134,22 @@ export function ProjectGrid({ summaries }: ProjectGridProps) {
                 {/* Sub Stats with NumberFlow */}
                 <div className="mt-4 grid grid-cols-2 gap-3 border-t-2 border-slate-200 pt-3 text-xs font-mono">
                   <div>
-                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-700 block">Funds Inflow</span>
-                    <div className="flex items-center gap-1 font-black text-emerald-800 text-sm mt-0.5">
+                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-700 block whitespace-nowrap">Funds Inflow</span>
+                    <div className="flex items-center gap-1 font-black text-emerald-800 text-sm mt-0.5 whitespace-nowrap">
                       <span>AED</span>
                       <NumberFlow
+                        locales="en-US"
                         value={summary.totalReceived}
                         format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
                       />
                     </div>
                   </div>
                   <div>
-                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-700 block">Total Spent</span>
-                    <div className="flex items-center gap-1 font-black text-slate-950 text-sm mt-0.5">
+                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-700 block whitespace-nowrap">Total Spent</span>
+                    <div className="flex items-center gap-1 font-black text-slate-950 text-sm mt-0.5 whitespace-nowrap">
                       <span>AED</span>
                       <NumberFlow
+                        locales="en-US"
                         value={summary.totalSpentWithVat}
                         format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
                       />
@@ -156,31 +159,31 @@ export function ProjectGrid({ summaries }: ProjectGridProps) {
 
                 {/* Pending Invoices Pill */}
                 {summary.pendingBillsCount > 0 && (
-                  <div className="mt-3 flex items-center justify-between rounded-xl bg-amber-100 p-2.5 text-xs font-bold text-amber-950 border-2 border-amber-300">
-                    <div className="flex items-center gap-1.5">
+                  <div className="mt-3 flex items-center justify-between rounded-xl bg-amber-100 p-2.5 text-xs font-bold text-amber-950 border-2 border-amber-300 whitespace-nowrap gap-2">
+                    <div className="flex items-center gap-1.5 min-w-0 truncate">
                       <AlertCircle className="h-4 w-4 shrink-0 text-amber-700" />
-                      <span><NumberFlow value={summary.pendingBillsCount} /> unsubmitted bills</span>
+                      <span className="truncate"><NumberFlow locales="en-US" value={summary.pendingBillsCount} /> unsubmitted bills</span>
                     </div>
-                    <span className="font-mono font-black text-amber-950">
-                      AED <NumberFlow value={summary.pendingBillsAmount} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
+                    <span className="font-mono font-black text-amber-950 shrink-0">
+                      AED <NumberFlow locales="en-US" value={summary.pendingBillsAmount} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
                     </span>
                   </div>
                 )}
               </div>
 
               {/* Action Toolbar */}
-              <div className="mt-5 flex items-center justify-between border-t-2 border-slate-200 pt-3.5">
+              <div className="mt-5 flex items-center justify-between border-t-2 border-slate-200 pt-3.5 whitespace-nowrap">
                 <div className="flex items-center gap-2">
                   <Link
                     href={`/transactions/new?projectId=${summary.project.id}&mode=fund`}
-                    className="inline-flex items-center gap-1 rounded-xl bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-emerald-700 transition-all shadow-xs cursor-pointer"
+                    className="inline-flex items-center gap-1 rounded-xl bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-emerald-700 transition-all shadow-xs cursor-pointer whitespace-nowrap"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     Inflow
                   </Link>
                   <Link
                     href={`/transactions/new?projectId=${summary.project.id}&mode=expense`}
-                    className="inline-flex items-center gap-1 rounded-xl bg-rose-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-rose-700 transition-all shadow-xs cursor-pointer"
+                    className="inline-flex items-center gap-1 rounded-xl bg-rose-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-rose-700 transition-all shadow-xs cursor-pointer whitespace-nowrap"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     Expense
@@ -189,7 +192,7 @@ export function ProjectGrid({ summaries }: ProjectGridProps) {
 
                 <Link
                   href={`/projects/${summary.project.id}`}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3 py-1.5 text-xs font-bold text-white hover:bg-slate-800 transition-colors shadow-xs"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3 py-1.5 text-xs font-bold text-white hover:bg-slate-800 transition-colors shadow-xs whitespace-nowrap"
                 >
                   <span>Ledger</span>
                   <ArrowUpRight className="h-3.5 w-3.5 text-slate-300" />

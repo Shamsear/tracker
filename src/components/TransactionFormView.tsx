@@ -311,25 +311,25 @@ export function TransactionFormView({ projects }: TransactionFormViewProps) {
 
             {/* Dynamic Real-time Calculation Panel with NumberFlow */}
             <div className="rounded-2xl border-2 border-slate-300 bg-slate-100 p-4 font-mono text-xs shadow-2xs">
-              <div className="flex justify-between text-slate-700">
-                <span className="font-bold">Base Expense:</span>
-                <div className="flex items-center gap-1 font-black tabular-nums text-slate-950">
+              <div className="flex justify-between items-center text-slate-700">
+                <span className="font-bold whitespace-nowrap">Base Expense:</span>
+                <div className="flex items-center gap-1 font-black tabular-nums text-slate-950 whitespace-nowrap">
                   <span>AED</span>
-                  <NumberFlow value={numBase} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
+                  <NumberFlow locales="en-US" value={numBase} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
                 </div>
               </div>
-              <div className="flex justify-between text-slate-700 mt-2">
-                <span className="font-bold">VAT ({vatRate * 100}%):</span>
-                <div className="flex items-center gap-1 font-black tabular-nums text-emerald-800">
+              <div className="flex justify-between items-center text-slate-700 mt-2">
+                <span className="font-bold whitespace-nowrap">VAT ({vatRate * 100}%):</span>
+                <div className="flex items-center gap-1 font-black tabular-nums text-emerald-800 whitespace-nowrap">
                   <span>+AED</span>
-                  <NumberFlow value={numVat} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
+                  <NumberFlow locales="en-US" value={numVat} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
                 </div>
               </div>
-              <div className="mt-2.5 flex justify-between border-t-2 border-slate-300 pt-2.5 font-black text-slate-950 text-base">
-                <span>Total Payable:</span>
-                <div className="flex items-center gap-1 tabular-nums text-slate-950">
+              <div className="mt-2.5 flex justify-between items-center border-t-2 border-slate-300 pt-2.5 font-black text-slate-950 text-base">
+                <span className="whitespace-nowrap">Total Payable:</span>
+                <div className="flex items-center gap-1 tabular-nums text-slate-950 whitespace-nowrap">
                   <span>AED</span>
-                  <NumberFlow value={numTotal} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
+                  <NumberFlow locales="en-US" value={numTotal} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />
                 </div>
               </div>
             </div>

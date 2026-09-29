@@ -113,6 +113,32 @@ export interface GlobalDashboardStats {
   projectSummaries: ProjectSummary[];
 }
 
+export interface SupervisorItem {
+  id: string;
+  name: string;
+  phone?: string | null;
+  role: string;
+  notes?: string | null;
+}
+
+export async function getAllSupervisors(): Promise<SupervisorItem[]> {
+  try {
+    const list = await prisma.supervisor.findMany({
+      orderBy: { name: 'asc' },
+    });
+    if (list.length > 0) return list;
+  } catch (err: any) {
+    console.warn('Prisma getAllSupervisors query failed:', err?.message);
+  }
+  return [
+    { id: 'sup-1', name: 'Rizwan Saleem', phone: '+971 50 123 4567', role: 'Operations & Accounts Lead' },
+    { id: 'sup-2', name: 'Jeromy', phone: '+971 50 234 5678', role: 'Field Supervisor (Lulu & Coops)' },
+    { id: 'sup-3', name: 'Rona', phone: '+971 50 345 6789', role: 'Field Supervisor (Fujairah / Dibba)' },
+    { id: 'sup-4', name: 'Aisha', phone: '+971 50 456 7890', role: 'Field Supervisor (Dibba / Sharjah)' },
+    { id: 'sup-5', name: 'Rahla', phone: '+971 50 567 8901', role: 'Field Supervisor (Sampling Activations)' },
+  ];
+}
+
 export async function getAllProjects(): Promise<Project[]> {
   try {
     await ensureDbSeeded();

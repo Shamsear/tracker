@@ -15,8 +15,7 @@ import {
 import { Project, ProjectLedgerRow, ProjectSummary } from '@/lib/ledger';
 import { updateExpenseStatus, deleteTransaction } from '@/lib/actions';
 import { CustomSelect } from '@/components/ui/CustomSelect';
-
-
+import { Pagination } from '@/components/ui/Pagination';
 
 interface ProjectLedgerViewProps {
   project: Project;
@@ -33,7 +32,15 @@ export function ProjectLedgerView({
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<'all' | 'fund' | 'expense'>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(15);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+
+  // Reset to page 1 on filter change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, typeFilter, statusFilter]);
+
 
   const handleStatusChange = async (expenseId: string, currentStatus: string) => {
     const sequence = ['Pending To Submit', 'Submitted', 'Approved', 'Closed'];
@@ -63,6 +70,11 @@ export function ProjectLedgerView({
 
     return matchesSearch && matchesType && matchesStatus;
   });
+
+  const paginatedLedger = filteredLedger.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const isHealthy = summary.currentBalance >= 0;
 
@@ -296,7 +308,7 @@ export function ProjectLedgerView({
                 </td>
               </tr>
             ) : (
-              filteredLedger.map((row) => {
+              paginatedLedger.map((row) => {
                 const isFund = row.type === 'fund';
                 const isDeficit = row.balance < 0;
 
@@ -430,7 +442,7 @@ export function ProjectLedgerView({
             No records found.
           </div>
         ) : (
-          filteredLedger.map((row) => {
+          paginatedLedger.map((row) => {
             const isFund = row.type === 'fund';
             const isDeficit = row.balance < 0;
 
@@ -514,6 +526,17 @@ export function ProjectLedgerView({
           })
         )}
       </div>
+
+      {/* Pagination Controls */}
+      <Pagination
+        currentPage={currentPage}
+        totalItems={filteredLedger.length}
+        pageSize={pageSize}
+        onPageChange={setCurrentPage}
+        onPageSizeChange={setPageSize}
+        pageSizeOptions={[10, 15, 25, 50, 100]}
+        itemLabel="transactions"
+      />
 
     </div>
   );

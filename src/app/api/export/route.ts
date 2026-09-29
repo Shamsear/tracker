@@ -11,7 +11,7 @@ export async function GET(request: Request) {
 
     if (projectId) {
       // Export single project sheet
-      const { summary, ledger } = getProjectLedger(projectId);
+      const { summary, ledger } = await getProjectLedger(projectId);
       const rows = ledger.map((row) => ({
         DATE: row.date,
         Purpose: row.purpose,
@@ -30,7 +30,7 @@ export async function GET(request: Request) {
       XLSX.utils.book_append_sheet(wb, ws, summary.project.name.substring(0, 31));
     } else {
       // Export Master Balance Sheet + All Projects
-      const stats = getGlobalDashboardStats();
+      const stats = await getGlobalDashboardStats();
 
       // Master Summary Sheet
       const masterRows = stats.projectSummaries.map((s) => ({
@@ -49,9 +49,9 @@ export async function GET(request: Request) {
       XLSX.utils.book_append_sheet(wb, masterWs, 'MASTER_SUMMARY');
 
       // Individual Sheets
-      const projects = getAllProjects();
+      const projects = await getAllProjects();
       for (const p of projects) {
-        const { ledger } = getProjectLedger(p.id);
+        const { ledger } = await getProjectLedger(p.id);
         const pRows = ledger.map((row) => ({
           DATE: row.date,
           Purpose: row.purpose,

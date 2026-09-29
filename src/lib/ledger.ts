@@ -1,40 +1,40 @@
-import { getDb } from './db';
+import { prisma, ensureDbSeeded } from './db';
 
 export interface Project {
   id: string;
   name: string;
   code: string;
   category: string;
-  sheet_name?: string;
-  color: string;
-  description?: string;
-  created_at: string;
+  sheetName?: string | null;
+  color?: string | null;
+  description?: string | null;
+  createdAt: Date;
 }
 
 export interface FundReceipt {
   id: string;
-  project_id: string;
+  projectId: string;
   amount: number;
-  received_date: string;
-  received_from?: string;
-  notes?: string;
-  created_at: string;
+  receivedDate: string;
+  receivedFrom?: string | null;
+  notes?: string | null;
+  createdAt: Date;
 }
 
 export interface Expense {
   id: string;
-  project_id: string;
-  expense_date: string;
+  projectId: string;
+  expenseDate: string;
   purpose: string;
   amount: number;
-  vat_rate: number;
-  vat_amount: number;
-  total_amount: number;
-  bill_status: 'Pending To Submit' | 'Submitted' | 'Approved' | 'Closed' | string;
-  supervisor_name?: string;
-  remarks?: string;
-  receipt_image?: string;
-  created_at: string;
+  vatRate: number;
+  vatAmount: number;
+  totalAmount: number;
+  billStatus: string;
+  supervisorName?: string | null;
+  remarks?: string | null;
+  receiptImage?: string | null;
+  createdAt: Date;
 }
 
 export interface ProjectLedgerRow {
@@ -80,48 +80,45 @@ export interface GlobalDashboardStats {
   projectSummaries: ProjectSummary[];
 }
 
-/**
- * Fetch all projects
- */
-export function getAllProjects(): Project[] {
-  const db = getDb();
-  return db.prepare('SELECT * FROM projects ORDER BY name ASC').all() as Project[];
+export async function getAllProjects(): Promise<Project[]> {
+  await ensureDbSeeded();
+  return prisma.project.findMany({
+    orderBy: { name: 'asc' },
+  });
 }
 
-/**
- * Fetch single project by ID
- */
-export function getProjectById(id: string): Project | undefined {
-  const db = getDb();
-  return db.prepare('SELECT * FROM projects WHERE id = ?').get(id) as Project | undefined;
+export async function getProjectById(id: string): Promise<Project | null> {
+  await ensureDbSeeded();
+  return prisma.project.findUnique({
+    where: { id },
+  });
 }
 
-/**
- * Computes exact chronological ledger for a project matching Excel formula:
- * Available Credit = Previous Balance + Received Amount
- * Balance = Available Credit - Total Expense Amount
- */
-export function getProjectLedger(projectId: string): {
+export async function getProjectLedger(projectId: string): Promise<{
   summary: ProjectSummary;
   ledger: ProjectLedgerRow[];
   receipts: FundReceipt[];
   expenses: Expense[];
-} {
-  const db = getDb();
-  const project = getProjectById(projectId);
+}> {
+  await ensureDbSeeded();
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+  });
+
   if (!project) {
     throw new Error(`Project ${projectId} not found`);
   }
 
-  const receipts = db
-    .prepare('SELECT * FROM fund_receipts WHERE project_id = ? ORDER BY received_date ASC, created_at ASC')
-    .all(projectId) as FundReceipt[];
+  const receipts = await prisma.fundReceipt.findMany({
+    where: { projectId },
+    orderBy: [{ receivedDate: 'asc' }, { createdAt: 'asc' }],
+  });
 
-  const expenses = db
-    .prepare('SELECT * FROM expenses WHERE project_id = ? ORDER BY expense_date ASC, created_at ASC')
-    .all(projectId) as Expense[];
+  const expenses = await prisma.expense.findMany({
+    where: { projectId },
+    orderBy: [{ expenseDate: 'asc' }, { createdAt: 'asc' }],
+  });
 
-  // Merge items into unified chronological sequence
   type UnifiedItem = {
     type: 'fund' | 'expense';
     item: FundReceipt | Expense;
@@ -135,8 +132,8 @@ export function getProjectLedger(projectId: string): {
     unified.push({
       type: 'fund',
       item: r,
-      sortDate: r.received_date,
-      sortOrder: 1, // Funds credited first on same date
+      sortDate: r.receivedDate,
+      sortOrder: 1,
     });
   }
 
@@ -144,7 +141,7 @@ export function getProjectLedger(projectId: string): {
     unified.push({
       type: 'expense',
       item: e,
-      sortDate: e.expense_date,
+      sortDate: e.expenseDate,
       sortOrder: 2,
     });
   }
@@ -171,19 +168,19 @@ export function getProjectLedger(projectId: string): {
       const fund = entry.item as FundReceipt;
       totalReceived += fund.amount;
       const availableCredit = runningBalance + fund.amount;
-      runningBalance = availableCredit; // Balance before any expense is available credit
+      runningBalance = availableCredit;
 
       ledger.push({
         id: fund.id,
         type: 'fund',
-        date: fund.received_date,
-        purpose: fund.received_from ? `Fund Received: ${fund.received_from}` : 'Fund Received',
+        date: fund.receivedDate,
+        purpose: fund.receivedFrom ? `Fund Received: ${fund.receivedFrom}` : 'Fund Received',
         amount: 0,
         vat_rate: 0,
         vat_amount: 0,
         total_amount: 0,
         received: fund.amount,
-        date_received: fund.received_date,
+        date_received: fund.receivedDate,
         available_credit: availableCredit,
         balance: runningBalance,
         remarks: fund.notes || undefined,
@@ -191,31 +188,31 @@ export function getProjectLedger(projectId: string): {
     } else {
       const exp = entry.item as Expense;
       totalSpentBase += exp.amount;
-      totalVat += exp.vat_amount;
-      totalSpentWithVat += exp.total_amount;
+      totalVat += exp.vatAmount;
+      totalSpentWithVat += exp.totalAmount;
 
-      if (exp.bill_status === 'Pending To Submit' || exp.bill_status === 'Pending') {
+      if (exp.billStatus === 'Pending To Submit' || exp.billStatus === 'Pending') {
         pendingBillsCount++;
-        pendingBillsAmount += exp.total_amount;
+        pendingBillsAmount += exp.totalAmount;
       }
 
       const availableCredit = runningBalance;
-      runningBalance = availableCredit - exp.total_amount;
+      runningBalance = availableCredit - exp.totalAmount;
 
       ledger.push({
         id: exp.id,
         type: 'expense',
-        date: exp.expense_date,
+        date: exp.expenseDate,
         purpose: exp.purpose,
         amount: exp.amount,
-        vat_rate: exp.vat_rate,
-        vat_amount: exp.vat_amount,
-        total_amount: exp.total_amount,
-        bill_status: exp.bill_status,
+        vat_rate: exp.vatRate,
+        vat_amount: exp.vatAmount,
+        total_amount: exp.totalAmount,
+        bill_status: exp.billStatus,
         received: 0,
         available_credit: availableCredit,
         balance: runningBalance,
-        supervisor_name: exp.supervisor_name || undefined,
+        supervisor_name: exp.supervisorName || undefined,
         remarks: exp.remarks || undefined,
       });
     }
@@ -236,17 +233,14 @@ export function getProjectLedger(projectId: string): {
 
   return {
     summary,
-    ledger: ledger.reverse(), // most recent at top for viewing
+    ledger: ledger.reverse(),
     receipts,
     expenses,
   };
 }
 
-/**
- * Calculates global stats for the entire application dashboard
- */
-export function getGlobalDashboardStats(): GlobalDashboardStats {
-  const projects = getAllProjects();
+export async function getGlobalDashboardStats(): Promise<GlobalDashboardStats> {
+  const projects = await getAllProjects();
   const projectSummaries: ProjectSummary[] = [];
 
   let totalFundsReceived = 0;
@@ -257,7 +251,7 @@ export function getGlobalDashboardStats(): GlobalDashboardStats {
   let totalPendingBillsCount = 0;
 
   for (const proj of projects) {
-    const { summary } = getProjectLedger(proj.id);
+    const { summary } = await getProjectLedger(proj.id);
     projectSummaries.push(summary);
 
     totalFundsReceived += summary.totalReceived;
@@ -279,18 +273,4 @@ export function getGlobalDashboardStats(): GlobalDashboardStats {
     totalPendingBillsCount,
     projectSummaries,
   };
-}
-
-/**
- * Currency formatter for UAE Dirhams (AED) or custom prefix
- */
-export function formatCurrency(amount: number, currency: string = 'AED'): string {
-  const formatted = Math.abs(amount).toLocaleString('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-  if (amount < 0) {
-    return `-${currency} ${formatted}`;
-  }
-  return `${currency} ${formatted}`;
 }

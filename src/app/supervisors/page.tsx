@@ -4,23 +4,26 @@ import { SupervisorPettyCashView } from '@/components/SupervisorPettyCashView';
 
 export const dynamic = 'force-dynamic';
 
-export default function SupervisorsPage() {
-  const projects = getAllProjects();
+export default async function SupervisorsPage() {
+  const projects = await getAllProjects();
 
   let vanExpensesSummary;
   let warehousePettyCashSummary;
   let vanRenewalSummary;
 
   try {
-    vanExpensesSummary = getProjectLedger('van-expenses').summary;
+    const res = await getProjectLedger('van-expenses');
+    vanExpensesSummary = res.summary;
   } catch {}
 
   try {
-    warehousePettyCashSummary = getProjectLedger('warehouse-petty-cash').summary;
+    const res = await getProjectLedger('warehouse-petty-cash');
+    warehousePettyCashSummary = res.summary;
   } catch {}
 
   try {
-    vanRenewalSummary = getProjectLedger('van-renewal').summary;
+    const res = await getProjectLedger('van-renewal');
+    vanRenewalSummary = res.summary;
   } catch {}
 
   return (

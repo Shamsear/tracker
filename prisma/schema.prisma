@@ -1,0 +1,73 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Project {
+  id          String         @id
+  name        String         @unique
+  code        String
+  category    String         @default("Project")
+  sheetName   String?        @map("sheet_name")
+  color       String?        @default("#2563eb")
+  description String?
+  createdAt   DateTime       @default(now()) @map("created_at")
+  receipts    FundReceipt[]
+  expenses    Expense[]
+
+  @@map("projects")
+}
+
+model FundReceipt {
+  id           String   @id
+  projectId    String   @map("project_id")
+  amount       Float
+  receivedDate String   @map("received_date")
+  receivedFrom String?  @map("received_from")
+  notes        String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("fund_receipts")
+}
+
+model Expense {
+  id             String   @id
+  projectId      String   @map("project_id")
+  expenseDate    String   @map("expense_date")
+  purpose        String
+  amount         Float
+  vatRate        Float    @default(0.05) @map("vat_rate")
+  vatAmount      Float    @map("vat_amount")
+  totalAmount    Float    @map("total_amount")
+  billStatus     String   @default("Pending To Submit") @map("bill_status")
+  supervisorName String?  @map("supervisor_name")
+  remarks        String?
+  receiptImage   String?  @map("receipt_image")
+  createdAt      DateTime @default(now()) @map("created_at")
+  project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("expenses")
+}
+
+model Supervisor {
+  id        String   @id
+  name      String   @unique
+  phone     String?
+  role      String   @default("Field Supervisor")
+  notes     String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("supervisors")
+}
+
+model SystemSetting {
+  key   String @id
+  value String
+
+  @@map("system_settings")
+}

@@ -3,12 +3,12 @@ import Link from 'next/link';
 import { getGlobalDashboardStats } from '@/lib/ledger';
 import { MasterSummaryCards } from '@/components/MasterSummaryCards';
 import { DashboardClientView } from '@/components/DashboardClientView';
-import { Download, Plus, FolderPlus } from 'lucide-react';
+import { Download, FolderPlus } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
-export default function HomePage() {
-  const stats = getGlobalDashboardStats();
+export default async function HomePage() {
+  const stats = await getGlobalDashboardStats();
 
   return (
     <div className="space-y-6">

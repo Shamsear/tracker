@@ -89,7 +89,7 @@ export function ProjectLedgerView({
               </span>
             </div>
             <p className="text-xs font-medium text-slate-500">
-              Synced from Sheet: {project.sheet_name || project.name}
+              Synced from Sheet: {project.sheetName || project.name}
             </p>
           </div>
         </div>

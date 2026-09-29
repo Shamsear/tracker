@@ -1,89 +1,27 @@
-import Database from 'better-sqlite3';
+import { PrismaClient } from '@prisma/client';
 import path from 'path';
 import fs from 'fs';
 
-const DB_PATH = path.join(process.cwd(), 'tracker.db');
-
-// Global singleton for better-sqlite3 in Next.js development & production
-const globalForDb = globalThis as unknown as {
-  dbInstance: Database.Database | undefined;
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
 };
 
-export function getDb(): Database.Database {
-  if (!globalForDb.dbInstance) {
-    const db = new Database(DB_PATH);
-    db.pragma('journal_mode = WAL');
-    db.pragma('foreign_keys = ON');
-    initTables(db);
-    globalForDb.dbInstance = db;
-  }
-  return globalForDb.dbInstance;
-}
+export const prisma =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    log: ['error'],
+  });
 
-function initTables(db: Database.Database) {
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS projects (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL UNIQUE,
-      code TEXT NOT NULL,
-      category TEXT NOT NULL DEFAULT 'Project',
-      sheet_name TEXT,
-      color TEXT DEFAULT '#2563eb',
-      description TEXT,
-      created_at TEXT DEFAULT (datetime('now'))
-    );
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
-    CREATE TABLE IF NOT EXISTS fund_receipts (
-      id TEXT PRIMARY KEY,
-      project_id TEXT NOT NULL,
-      amount REAL NOT NULL,
-      received_date TEXT NOT NULL,
-      received_from TEXT,
-      notes TEXT,
-      created_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
-    );
-
-    CREATE TABLE IF NOT EXISTS expenses (
-      id TEXT PRIMARY KEY,
-      project_id TEXT NOT NULL,
-      expense_date TEXT NOT NULL,
-      purpose TEXT NOT NULL,
-      amount REAL NOT NULL,
-      vat_rate REAL DEFAULT 0.05,
-      vat_amount REAL NOT NULL,
-      total_amount REAL NOT NULL,
-      bill_status TEXT DEFAULT 'Pending To Submit',
-      supervisor_name TEXT,
-      remarks TEXT,
-      receipt_image TEXT,
-      created_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
-    );
-
-    CREATE TABLE IF NOT EXISTS supervisors (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL UNIQUE,
-      phone TEXT,
-      role TEXT DEFAULT 'Supervisor',
-      notes TEXT,
-      created_at TEXT DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS system_settings (
-      key TEXT PRIMARY KEY,
-      value TEXT NOT NULL
-    );
-  `);
-
-  // Check if seeded
-  const count = db.prepare('SELECT COUNT(*) as count FROM projects').get() as { count: number };
-  if (count.count === 0) {
-    seedFromInitialData(db);
+export async function ensureDbSeeded() {
+  const count = await prisma.project.count();
+  if (count === 0) {
+    await seedFromInitialData();
   }
 }
 
-export function seedFromInitialData(db: Database.Database) {
+export async function seedFromInitialData() {
   const seedPath = path.join(process.cwd(), 'src', 'data', 'seed_data.json');
   if (!fs.existsSync(seedPath)) {
     return;
@@ -91,21 +29,6 @@ export function seedFromInitialData(db: Database.Database) {
 
   const rawData = fs.readFileSync(seedPath, 'utf-8');
   const seedData: Record<string, any[]> = JSON.parse(rawData);
-
-  const insertProject = db.prepare(`
-    INSERT OR REPLACE INTO projects (id, name, code, category, sheet_name, color, description)
-    VALUES (@id, @name, @code, @category, @sheet_name, @color, @description)
-  `);
-
-  const insertFund = db.prepare(`
-    INSERT INTO fund_receipts (id, project_id, amount, received_date, received_from, notes)
-    VALUES (@id, @project_id, @amount, @received_date, @received_from, @notes)
-  `);
-
-  const insertExpense = db.prepare(`
-    INSERT INTO expenses (id, project_id, expense_date, purpose, amount, vat_rate, vat_amount, total_amount, bill_status, supervisor_name, remarks)
-    VALUES (@id, @project_id, @expense_date, @purpose, @amount, @vat_rate, @vat_amount, @total_amount, @bill_status, @supervisor_name, @remarks)
-  `);
 
   const projectMap: Record<string, { id: string; name: string; category: string; color: string }> = {
     'Sadia Project Expense Balance': { id: 'sadia', name: 'Sadia', category: 'Project', color: '#dc2626' },
@@ -131,85 +54,105 @@ export function seedFromInitialData(db: Database.Database) {
     'Warehouse Petty cash': { id: 'warehouse-petty-cash', name: 'Warehouse Petty Cash', category: 'Petty Cash', color: '#7c3aed' },
   };
 
-  const seedTx = db.transaction(() => {
-    // 1. Insert all projects
-    for (const [sheetName, proj] of Object.entries(projectMap)) {
-      insertProject.run({
+  // 1. Insert projects
+  for (const [sheetName, proj] of Object.entries(projectMap)) {
+    await prisma.project.upsert({
+      where: { id: proj.id },
+      update: {},
+      create: {
         id: proj.id,
         name: proj.name,
         code: proj.id.toUpperCase().replace(/-/g, '_'),
         category: proj.category,
-        sheet_name: sheetName,
+        sheetName: sheetName,
         color: proj.color,
         description: `Ledger for ${proj.name} synced from Excel master`,
-      });
-    }
+      },
+    });
+  }
 
-    // 2. Insert records from seed data
-    let fundCount = 0;
-    let expCount = 0;
+  // 2. Insert records
+  let fundCount = 0;
+  let expCount = 0;
 
-    for (const [sheetName, records] of Object.entries(seedData)) {
-      const proj = projectMap[sheetName];
-      if (!proj) continue;
+  const fundDataToInsert: any[] = [];
+  const expDataToInsert: any[] = [];
 
-      for (let i = 0; i < records.length; i++) {
-        const item = records[i];
+  for (const [sheetName, records] of Object.entries(seedData)) {
+    const proj = projectMap[sheetName];
+    if (!proj) continue;
 
-        // If it has received funds
-        if (item.received && item.received > 0) {
-          fundCount++;
-          const recDate = item.date_received || item.expense_date || '2025-05-01';
-          insertFund.run({
-            id: `fund-${proj.id}-${fundCount}`,
-            project_id: proj.id,
-            amount: Number(item.received),
-            received_date: recDate,
-            received_from: item.remarks && item.remarks.includes('Received') ? item.remarks : 'Head Office / Accounts',
-            notes: item.remarks || 'Initial Excel Inflow',
-          });
-        }
+    for (let i = 0; i < records.length; i++) {
+      const item = records[i];
 
-        // If it has expense amount or purpose
-        if (item.amount > 0 || (item.purpose && item.purpose !== 'Fund Received' && item.total > 0)) {
-          expCount++;
-          const expDate = item.expense_date || '2025-05-01';
-          const amt = Number(item.amount) || Number(item.total) || 0;
-          const vat = Number(item.vat) || 0;
-          const total = Number(item.total) || (amt + vat);
-          const vatRate = amt > 0 ? Number((vat / amt).toFixed(2)) : 0.05;
+      if (item.received && item.received > 0) {
+        fundCount++;
+        const recDate = item.date_received || item.expense_date || '2025-05-01';
+        fundDataToInsert.push({
+          id: `fund-${proj.id}-${fundCount}`,
+          projectId: proj.id,
+          amount: Number(item.received),
+          receivedDate: recDate,
+          receivedFrom: item.remarks && item.remarks.includes('Received') ? item.remarks : 'Head Office / Accounts',
+          notes: item.remarks || 'Initial Excel Inflow',
+        });
+      }
 
-          insertExpense.run({
-            id: `exp-${proj.id}-${expCount}`,
-            project_id: proj.id,
-            expense_date: expDate,
-            purpose: item.purpose || 'Project Expense',
-            amount: amt,
-            vat_rate: vatRate > 0 ? 0.05 : 0.0,
-            vat_amount: vat,
-            total_amount: total,
-            bill_status: item.bill_status || 'Closed',
-            supervisor_name: null,
-            remarks: item.remarks || null,
-          });
-        }
+      if (item.amount > 0 || (item.purpose && item.purpose !== 'Fund Received' && item.total > 0)) {
+        expCount++;
+        const expDate = item.expense_date || '2025-05-01';
+        const amt = Number(item.amount) || Number(item.total) || 0;
+        const vat = Number(item.vat) || 0;
+        const total = Number(item.total) || (amt + vat);
+        const vatRate = amt > 0 ? Number((vat / amt).toFixed(2)) : 0.05;
+
+        expDataToInsert.push({
+          id: `exp-${proj.id}-${expCount}`,
+          projectId: proj.id,
+          expenseDate: expDate,
+          purpose: item.purpose || 'Project Expense',
+          amount: amt,
+          vatRate: vatRate > 0 ? 0.05 : 0.0,
+          vatAmount: vat,
+          totalAmount: total,
+          billStatus: item.bill_status || 'Closed',
+          supervisorName: null,
+          remarks: item.remarks || null,
+        });
       }
     }
+  }
 
-    // Default Supervisors
-    const insertSup = db.prepare(`
-      INSERT OR IGNORE INTO supervisors (id, name, phone, role)
-      VALUES (@id, @name, @phone, @role)
-    `);
+  if (fundDataToInsert.length > 0) {
+    await prisma.fundReceipt.createMany({
+      data: fundDataToInsert,
+      skipDuplicates: true,
+    });
+  }
 
-    insertSup.run({ id: 'sup-1', name: 'Rizwan Saleem', phone: '+971501234567', role: 'Operations Manager' });
-    insertSup.run({ id: 'sup-2', name: 'Jeromy', phone: '+971502345678', role: 'Field Supervisor' });
-    insertSup.run({ id: 'sup-3', name: 'Rona', phone: '+971503456789', role: 'Field Supervisor' });
-    insertSup.run({ id: 'sup-4', name: 'Aisha', phone: '+971504567890', role: 'Field Supervisor' });
-    insertSup.run({ id: 'sup-5', name: 'Rahla', phone: '+971505678901', role: 'Field Supervisor' });
+  if (expDataToInsert.length > 0) {
+    await prisma.expense.createMany({
+      data: expDataToInsert,
+      skipDuplicates: true,
+    });
+  }
 
-    console.log(`Seeded DB with ${fundCount} receipts and ${expCount} expenses!`);
-  });
+  // Supervisors
+  const defaultSupervisors = [
+    { id: 'sup-1', name: 'Rizwan Saleem', phone: '+971501234567', role: 'Operations Manager' },
+    { id: 'sup-2', name: 'Jeromy', phone: '+971502345678', role: 'Field Supervisor' },
+    { id: 'sup-3', name: 'Rona', phone: '+971503456789', role: 'Field Supervisor' },
+    { id: 'sup-4', name: 'Aisha', phone: '+971504567890', role: 'Field Supervisor' },
+    { id: 'sup-5', name: 'Rahla', phone: '+971505678901', role: 'Field Supervisor' },
+  ];
 
-  seedTx();
+  for (const sup of defaultSupervisors) {
+    await prisma.supervisor.upsert({
+      where: { id: sup.id },
+      update: {},
+      create: sup,
+    });
+  }
+
+  console.log(`Successfully seeded Neon PostgreSQL with ${fundCount} receipts and ${expCount} expenses!`);
 }

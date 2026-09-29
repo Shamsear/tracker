@@ -4,8 +4,8 @@ import { TransactionFormView } from '@/components/TransactionFormView';
 
 export const dynamic = 'force-dynamic';
 
-export default function NewTransactionPage() {
-  const projects = getAllProjects();
+export default async function NewTransactionPage() {
+  const projects = await getAllProjects();
 
   return (
     <Suspense fallback={

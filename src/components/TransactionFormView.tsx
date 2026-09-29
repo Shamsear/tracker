@@ -182,7 +182,7 @@ export function TransactionFormView({ projects }: TransactionFormViewProps) {
             </select>
             {selectedProject && (
               <span className="mt-1 block text-[11px] font-mono text-slate-400">
-                Sheet: {selectedProject.sheet_name || selectedProject.name}
+                Sheet: {selectedProject.sheetName || selectedProject.name}
               </span>
             )}
           </div>

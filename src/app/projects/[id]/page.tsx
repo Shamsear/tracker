@@ -11,14 +11,14 @@ interface ProjectPageProps {
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { id } = await params;
-  const project = getProjectById(id);
+  const project = await getProjectById(id);
 
   if (!project) {
     notFound();
   }
 
-  const { summary, ledger } = getProjectLedger(id);
-  const allProjects = getAllProjects();
+  const { summary, ledger } = await getProjectLedger(id);
+  const allProjects = await getAllProjects();
 
   return (
     <ProjectLedgerView

@@ -21,6 +21,7 @@ export async function GET(request: Request) {
       const { summary, ledger } = await getProjectLedger(projectId);
       const rows = ledger.map((row) => ({
         DATE: row.date,
+        TIME: row.time || '',
         Purpose: row.purpose,
         Amount: row.amount || '',
         Vat: row.vat_amount || '',
@@ -30,6 +31,7 @@ export async function GET(request: Request) {
         BALANCE: row.balance.toFixed(2),
         Received: row.received || '',
         'Date Amount Received': row.date_received || '',
+        'Time Received': row.time_received || '',
         Remarks: row.remarks || '',
       }));
 
@@ -61,6 +63,7 @@ export async function GET(request: Request) {
         const { ledger } = await getProjectLedger(p.id);
         const pRows = ledger.map((row) => ({
           DATE: row.date,
+          TIME: row.time || '',
           Purpose: row.purpose,
           Amount: row.amount || '',
           Vat: row.vat_amount || '',
@@ -70,6 +73,7 @@ export async function GET(request: Request) {
           BALANCE: row.balance.toFixed(2),
           Received: row.received || '',
           'Date Amount Received': row.date_received || '',
+          'Time Received': row.time_received || '',
           Remarks: row.remarks || '',
         }));
 

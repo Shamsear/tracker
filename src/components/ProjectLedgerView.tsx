@@ -9,11 +9,13 @@ import {
   ArrowUpRight, 
   Search, 
   FileSpreadsheet, 
-  Trash2
+  Trash2,
+  Clock
 } from 'lucide-react';
 import { Project, ProjectLedgerRow, ProjectSummary } from '@/lib/ledger';
 import { updateExpenseStatus, deleteTransaction } from '@/lib/actions';
 import { CustomSelect } from '@/components/ui/CustomSelect';
+
 
 
 interface ProjectLedgerViewProps {
@@ -274,7 +276,7 @@ export function ProjectLedgerView({
         <table className="w-full text-left text-xs">
           <thead className="border-b border-slate-200 bg-slate-50 font-black uppercase text-[11px] tracking-wider text-slate-700">
             <tr>
-              <th className="py-4 px-4">Date</th>
+              <th className="py-4 px-4">Date & Time</th>
               <th className="py-4 px-4">Purpose / Description</th>
               <th className="py-4 px-4 text-right">Base Amount</th>
               <th className="py-4 px-4 text-right">VAT (5%)</th>
@@ -306,7 +308,15 @@ export function ProjectLedgerView({
                     }`}
                   >
                     <td className="py-3.5 px-4 text-slate-800 font-bold whitespace-nowrap">
-                      {row.date}
+                      <div className="flex flex-col">
+                        <span>{row.date}</span>
+                        {row.time && (
+                          <span className="text-[10px] text-slate-500 font-mono font-medium flex items-center gap-1 mt-0.5">
+                            <Clock className="w-3 h-3 text-slate-400 shrink-0" />
+                            {row.time}
+                          </span>
+                        )}
+                      </div>
                     </td>
 
                     <td className="py-3.5 px-4 font-sans font-bold text-slate-950 max-w-xs truncate">
@@ -435,8 +445,16 @@ export function ProjectLedgerView({
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
-                    <span className="font-mono text-xs font-bold text-slate-500 block">{row.date}</span>
-                    <span className="font-black text-sm text-slate-950 block mt-0.5 truncate">
+                    <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-500 flex-wrap">
+                      <span>{row.date}</span>
+                      {row.time && (
+                        <span className="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-600 font-medium flex items-center gap-1">
+                          <Clock className="w-2.5 h-2.5 text-slate-400" />
+                          {row.time}
+                        </span>
+                      )}
+                    </div>
+                    <span className="font-black text-sm text-slate-950 block mt-1 truncate">
                       {row.purpose}
                     </span>
                   </div>

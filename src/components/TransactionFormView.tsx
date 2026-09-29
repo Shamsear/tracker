@@ -14,12 +14,18 @@ import {
   Calendar,
   Wallet,
   Receipt,
-  FileText
+  FileText,
+  Clock
 } from 'lucide-react';
 import { Project } from '@/lib/ledger';
 import { recordFundReceipt, recordExpense } from '@/lib/actions';
 import { CustomSelect } from '@/components/ui/CustomSelect';
 
+function getLocalDateTimeString() {
+  const now = new Date();
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+}
 
 interface TransactionFormViewProps {
   projects: Project[];
@@ -34,10 +40,11 @@ export function TransactionFormView({ projects }: TransactionFormViewProps) {
 
   const [mode, setMode] = useState<'fund' | 'expense'>(initialMode);
   const [projectId, setProjectId] = useState<string>(initialProjectId);
-  const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState<string>(getLocalDateTimeString());
   
   // Fund Inflow Fields
   const [receivedAmount, setReceivedAmount] = useState<string>('');
+
   const [receivedFrom, setReceivedFrom] = useState<string>('');
   const [fundNotes, setFundNotes] = useState<string>('');
 
@@ -191,11 +198,21 @@ export function TransactionFormView({ projects }: TransactionFormViewProps) {
           </div>
 
           <div>
-            <label className="block text-xs font-black uppercase tracking-wider text-slate-800">
-              {mode === 'fund' ? 'Date Amount Received *' : 'Expense Date *'}
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="block text-xs font-black uppercase tracking-wider text-slate-800">
+                {mode === 'fund' ? 'Date & Time Received *' : 'Expense Date & Time *'}
+              </label>
+              <button
+                type="button"
+                onClick={() => setDate(getLocalDateTimeString())}
+                className="text-[11px] font-bold text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1 cursor-pointer"
+              >
+                <Clock className="h-3 w-3" />
+                <span>Set to Current Time</span>
+              </button>
+            </div>
             <input
-              type="date"
+              type="datetime-local"
               value={date}
               onChange={(e) => setDate(e.target.value)}
               required

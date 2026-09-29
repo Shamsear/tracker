@@ -41,6 +41,8 @@ export interface ProjectLedgerRow {
   id: string;
   type: 'fund' | 'expense';
   date: string;
+  time?: string;
+  full_date?: string;
   purpose: string;
   amount: number;
   vat_rate: number;
@@ -49,11 +51,42 @@ export interface ProjectLedgerRow {
   bill_status?: string;
   received: number;
   date_received?: string;
+  time_received?: string;
   available_credit: number;
   balance: number;
   supervisor_name?: string;
   remarks?: string;
 }
+
+export function parseDateAndTime(rawDate: string, createdAt?: Date): { date: string; time: string; full: string } {
+  if (!rawDate) {
+    const d = createdAt ? new Date(createdAt) : new Date();
+    const date = d.toISOString().split('T')[0];
+    const time = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    return { date, time, full: `${date} ${time}` };
+  }
+
+  if (rawDate.includes('T') || (rawDate.includes(':') && rawDate.includes(' '))) {
+    const d = new Date(rawDate);
+    if (!isNaN(d.getTime())) {
+      const date = d.toISOString().split('T')[0];
+      const time = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+      return { date, time, full: `${date} ${time}` };
+    }
+  }
+
+  const date = rawDate.split('T')[0].split(' ')[0];
+  if (createdAt) {
+    const d = new Date(createdAt);
+    if (!isNaN(d.getTime())) {
+      const time = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+      return { date, time, full: `${date} ${time}` };
+    }
+  }
+
+  return { date, time: '', full: date };
+}
+
 
 export interface ProjectSummary {
   project: Project;
@@ -221,6 +254,7 @@ export async function getProjectLedger(projectId: string): Promise<{
   for (const entry of unified) {
     if (entry.type === 'fund') {
       const fund = entry.item as FundReceipt;
+      const dt = parseDateAndTime(fund.receivedDate, fund.createdAt);
       totalReceived += fund.amount;
       const availableCredit = runningBalance + fund.amount;
       runningBalance = availableCredit;
@@ -228,20 +262,24 @@ export async function getProjectLedger(projectId: string): Promise<{
       ledger.push({
         id: fund.id,
         type: 'fund',
-        date: fund.receivedDate,
+        date: dt.date,
+        time: dt.time,
+        full_date: dt.full,
         purpose: fund.receivedFrom ? `Fund Received: ${fund.receivedFrom}` : 'Fund Received',
         amount: 0,
         vat_rate: 0,
         vat_amount: 0,
         total_amount: 0,
         received: fund.amount,
-        date_received: fund.receivedDate,
+        date_received: dt.date,
+        time_received: dt.time,
         available_credit: availableCredit,
         balance: runningBalance,
         remarks: fund.notes || undefined,
       });
     } else {
       const exp = entry.item as Expense;
+      const dt = parseDateAndTime(exp.expenseDate, exp.createdAt);
       totalSpentBase += exp.amount;
       totalVat += exp.vatAmount;
       totalSpentWithVat += exp.totalAmount;
@@ -257,7 +295,9 @@ export async function getProjectLedger(projectId: string): Promise<{
       ledger.push({
         id: exp.id,
         type: 'expense',
-        date: exp.expenseDate,
+        date: dt.date,
+        time: dt.time,
+        full_date: dt.full,
         purpose: exp.purpose,
         amount: exp.amount,
         vat_rate: exp.vatRate,

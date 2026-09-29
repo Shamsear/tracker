@@ -70,9 +70,10 @@ export function ProjectGrid({ summaries }: ProjectGridProps) {
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((summary) => {
           const isDeficit = summary.currentBalance < 0;
-          const spentRatio = summary.totalReceived > 0 
-            ? Math.min(100, Math.max(0, (summary.totalSpentWithVat / summary.totalReceived) * 100))
-            : (summary.totalSpentWithVat > 0 ? 100 : 0);
+          const hasInflow = summary.totalReceived > 0;
+          const remainingRatio = hasInflow
+            ? Math.max(0, Math.min(100, (summary.currentBalance / summary.totalReceived) * 100))
+            : 0;
 
           return (
             <div
@@ -120,14 +121,49 @@ export function ProjectGrid({ summaries }: ProjectGridProps) {
                     </div>
                   </div>
 
-                  {/* Utilization Progress Bar */}
-                  <div className="mt-3 w-full bg-slate-200/70 rounded-full h-1.5 overflow-hidden">
-                    <div 
-                      className={`h-full rounded-full transition-all duration-500 ${
-                        isDeficit ? 'bg-rose-600' : (spentRatio > 85 ? 'bg-amber-500' : 'bg-emerald-600')
-                      }`}
-                      style={{ width: `${spentRatio}%` }}
-                    />
+                  {/* Float Remaining Progress Bar with Dynamic Status */}
+                  <div className="mt-3.5 space-y-1.5">
+                    <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider">
+                      <span className={isDeficit ? 'text-rose-700' : 'text-slate-500'}>
+                        {isDeficit
+                          ? 'Deficit (Over budget)'
+                          : !hasInflow
+                          ? 'No Funds Inflow'
+                          : summary.currentBalance === 0
+                          ? 'Fully Utilized'
+                          : 'Float Remaining'}
+                      </span>
+                      <span className={`font-mono tabular-nums ${
+                        isDeficit 
+                          ? 'text-rose-700 font-black' 
+                          : !hasInflow || summary.currentBalance === 0 
+                          ? 'text-slate-400' 
+                          : remainingRatio > 50 
+                          ? 'text-emerald-700 font-bold' 
+                          : remainingRatio > 15 
+                          ? 'text-blue-700 font-bold' 
+                          : 'text-amber-700 font-bold'
+                      }`}>
+                        {isDeficit ? 'Overdrawn' : !hasInflow ? '0%' : `${remainingRatio.toFixed(0)}%`}
+                      </span>
+                    </div>
+
+                    <div className="w-full bg-slate-200/70 rounded-full h-1.5 overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          isDeficit 
+                            ? 'bg-rose-600' 
+                            : !hasInflow || summary.currentBalance === 0
+                            ? 'bg-transparent'
+                            : remainingRatio > 50
+                            ? 'bg-emerald-500'
+                            : remainingRatio > 15
+                            ? 'bg-blue-500'
+                            : 'bg-amber-500'
+                        }`}
+                        style={{ width: `${isDeficit ? 100 : remainingRatio}%` }}
+                      />
+                    </div>
                   </div>
                 </div>
 

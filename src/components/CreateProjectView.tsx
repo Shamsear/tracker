@@ -140,22 +140,41 @@ export function CreateProjectView() {
           </div>
 
           <div>
-            <label className="block text-xs font-black uppercase tracking-wider text-slate-800">
-              Color Accent
-            </label>
-            <div className="mt-2.5 flex items-center gap-2">
-              {COLOR_OPTIONS.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setColor(c)}
-                  className={`h-7 w-7 rounded-full transition-transform cursor-pointer border border-slate-200 ${
-                    color === c ? 'scale-125 ring-2 ring-slate-950 ring-offset-2' : 'hover:scale-110'
-                  }`}
-                  style={{ backgroundColor: c }}
-                  aria-label={`Select color ${c}`}
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-black uppercase tracking-wider text-slate-800">
+                Color Accent
+              </label>
+              <div className="flex items-center gap-1.5 text-[11px] font-mono font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
+                <span
+                  className="h-2.5 w-2.5 rounded-full inline-block"
+                  style={{ backgroundColor: color }}
                 />
-              ))}
+                <span>{color}</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between gap-1.5 rounded-xl border border-slate-200 bg-white p-2 min-h-[44px] shadow-2xs">
+              {COLOR_OPTIONS.map((c) => {
+                const isSelected = color === c;
+                return (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setColor(c)}
+                    className={`relative flex h-7 w-7 items-center justify-center rounded-full transition-all cursor-pointer ${
+                      isSelected
+                        ? 'ring-2 ring-slate-950 ring-offset-2 ring-offset-white shadow-xs'
+                        : 'hover:scale-110 opacity-80 hover:opacity-100'
+                    }`}
+                    style={{ backgroundColor: c }}
+                    aria-label={`Select color ${c}`}
+                  >
+                    {isSelected && (
+                      <Check className="h-3.5 w-3.5 text-white stroke-[3] drop-shadow-xs" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

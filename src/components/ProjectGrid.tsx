@@ -198,31 +198,6 @@ export function ProjectGrid({ summaries }: ProjectGridProps) {
                   <ArrowUpRight className="h-3.5 w-3.5 text-slate-300" />
                 </Link>
               </div>
-                <div className="flex items-center gap-2">
-                  <Link
-                    href={`/transactions/new?projectId=${summary.project.id}&mode=fund`}
-                    className="inline-flex items-center gap-1 rounded-xl bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-emerald-700 transition-all shadow-xs cursor-pointer whitespace-nowrap"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                    Inflow
-                  </Link>
-                  <Link
-                    href={`/transactions/new?projectId=${summary.project.id}&mode=expense`}
-                    className="inline-flex items-center gap-1 rounded-xl bg-rose-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-rose-700 transition-all shadow-xs cursor-pointer whitespace-nowrap"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                    Expense
-                  </Link>
-                </div>
-
-                <Link
-                  href={`/projects/${summary.project.id}`}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3 py-1.5 text-xs font-bold text-white hover:bg-slate-800 transition-colors shadow-xs whitespace-nowrap"
-                >
-                  <span>Ledger</span>
-                  <ArrowUpRight className="h-3.5 w-3.5 text-slate-300" />
-                </Link>
-              </div>
 
             </div>
           );

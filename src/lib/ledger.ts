@@ -250,37 +250,56 @@ export async function getProjectLedger(projectId: string): Promise<{
 }
 
 export async function getGlobalDashboardStats(): Promise<GlobalDashboardStats> {
-  const projects = await getAllProjects();
-  const projectSummaries: ProjectSummary[] = [];
+  try {
+    const projects = await getAllProjects();
+    const projectSummaries: ProjectSummary[] = [];
 
-  let totalFundsReceived = 0;
-  let totalExpensesWithVat = 0;
-  let totalExpensesBase = 0;
-  let totalVatPaid = 0;
-  let totalPendingBillsAmount = 0;
-  let totalPendingBillsCount = 0;
+    let totalFundsReceived = 0;
+    let totalExpensesWithVat = 0;
+    let totalExpensesBase = 0;
+    let totalVatPaid = 0;
+    let totalPendingBillsAmount = 0;
+    let totalPendingBillsCount = 0;
 
-  for (const proj of projects) {
-    const { summary } = await getProjectLedger(proj.id);
-    projectSummaries.push(summary);
+    for (const proj of projects) {
+      try {
+        const { summary } = await getProjectLedger(proj.id);
+        projectSummaries.push(summary);
 
-    totalFundsReceived += summary.totalReceived;
-    totalExpensesWithVat += summary.totalSpentWithVat;
-    totalExpensesBase += summary.totalSpentBase;
-    totalVatPaid += summary.totalVat;
-    totalPendingBillsAmount += summary.pendingBillsAmount;
-    totalPendingBillsCount += summary.pendingBillsCount;
+        totalFundsReceived += summary.totalReceived;
+        totalExpensesWithVat += summary.totalSpentWithVat;
+        totalExpensesBase += summary.totalSpentBase;
+        totalVatPaid += summary.totalVat;
+        totalPendingBillsAmount += summary.pendingBillsAmount;
+        totalPendingBillsCount += summary.pendingBillsCount;
+      } catch (err) {
+        console.error(`Error loading ledger for ${proj.id}:`, err);
+      }
+    }
+
+    return {
+      totalProjects: projects.length,
+      totalFundsReceived,
+      totalExpensesWithVat,
+      totalExpensesBase,
+      totalVatPaid,
+      netAvailableBalance: totalFundsReceived - totalExpensesWithVat,
+      totalPendingBillsAmount,
+      totalPendingBillsCount,
+      projectSummaries,
+    };
+  } catch (err) {
+    console.error('Error in getGlobalDashboardStats:', err);
+    return {
+      totalProjects: 0,
+      totalFundsReceived: 0,
+      totalExpensesWithVat: 0,
+      totalExpensesBase: 0,
+      totalVatPaid: 0,
+      netAvailableBalance: 0,
+      totalPendingBillsAmount: 0,
+      totalPendingBillsCount: 0,
+      projectSummaries: [],
+    };
   }
-
-  return {
-    totalProjects: projects.length,
-    totalFundsReceived,
-    totalExpensesWithVat,
-    totalExpensesBase,
-    totalVatPaid,
-    netAvailableBalance: totalFundsReceived - totalExpensesWithVat,
-    totalPendingBillsAmount,
-    totalPendingBillsCount,
-    projectSummaries,
-  };
 }

@@ -319,7 +319,7 @@ export function TransactionFormView({ projects }: TransactionFormViewProps) {
                 </div>
               </div>
               <div className="flex justify-between items-center text-slate-700 mt-2">
-                <span className="font-bold whitespace-nowrap">VAT ({vatRate * 100}%):</span>
+                <span className="font-bold whitespace-nowrap">VAT (<NumberFlow locales="en-US" value={vatRate * 100} />%):</span>
                 <div className="flex items-center gap-1 font-black tabular-nums text-emerald-800 whitespace-nowrap">
                   <span>+AED</span>
                   <NumberFlow locales="en-US" value={numVat} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />

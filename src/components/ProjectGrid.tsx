@@ -34,17 +34,17 @@ export function ProjectGrid({ summaries }: ProjectGridProps) {
     <div className="space-y-4">
       
       {/* Search & Category Toolbar */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-white p-4 rounded-2xl border-2 border-slate-300 shadow-sm">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
         
         {/* Search */}
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <input
             type="text"
             placeholder="Search projects (e.g. Sadia, Van, Listerine)..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-xl border-2 border-slate-300 bg-white py-2.5 pl-10 pr-3 text-xs font-bold text-slate-950 placeholder:text-slate-500 focus:border-slate-900 focus:outline-none transition-all"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pl-10 pr-3 text-xs font-bold text-slate-950 placeholder:text-slate-400 focus:border-slate-800 focus:bg-white focus:outline-none transition-all"
           />
         </div>
 
@@ -54,10 +54,10 @@ export function ProjectGrid({ summaries }: ProjectGridProps) {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all cursor-pointer border ${
+              className={`rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
                 selectedCategory === cat
-                  ? 'bg-slate-950 text-white border-slate-950 shadow-sm'
-                  : 'bg-slate-100 text-slate-800 border-slate-300 hover:bg-slate-200'
+                  ? 'bg-slate-950 text-white shadow-xs'
+                  : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200/70'
               }`}
             >
               {cat}
@@ -77,14 +77,14 @@ export function ProjectGrid({ summaries }: ProjectGridProps) {
           return (
             <div
               key={summary.project.id}
-              className="flex flex-col justify-between rounded-2xl border-2 border-slate-300 bg-white p-5 shadow-sm hover:border-slate-600 hover:shadow-md transition-all group"
+              className="flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs hover:border-slate-400 hover:shadow-md transition-all group"
             >
               <div>
                 {/* Header */}
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5 min-w-0">
                     <span 
-                      className="h-4 w-4 rounded-full shrink-0 shadow-xs border border-slate-300" 
+                      className="h-3.5 w-3.5 rounded-full shrink-0 ring-2 ring-slate-100" 
                       style={{ backgroundColor: summary.project.color || '#2563eb' }}
                     />
                     <Link
@@ -95,20 +95,20 @@ export function ProjectGrid({ summaries }: ProjectGridProps) {
                     </Link>
                   </div>
 
-                  <span className="rounded-lg bg-slate-200 border border-slate-300 px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wider text-slate-900 shrink-0 whitespace-nowrap">
+                  <span className="rounded-lg bg-slate-100 px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wider text-slate-700 shrink-0 whitespace-nowrap">
                     {summary.project.category}
                   </span>
                 </div>
 
                 {/* Balance Display with NumberFlow */}
-                <div className={`mt-4 rounded-xl p-4 border-2 transition-all ${
-                  isDeficit ? 'bg-rose-50 border-rose-300' : 'bg-slate-50 border-slate-200'
+                <div className={`mt-4 rounded-xl p-4 border transition-all ${
+                  isDeficit ? 'bg-rose-50/60 border-rose-200/90' : 'bg-slate-50/70 border-slate-200/60'
                 }`}>
-                  <span className="text-xs font-black uppercase tracking-wider text-slate-700 block whitespace-nowrap">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-600 block whitespace-nowrap">
                     Available Balance
                   </span>
                   <div className="mt-1 flex items-baseline gap-1.5 font-mono whitespace-nowrap">
-                    <span className="text-xs font-black text-slate-700">AED</span>
+                    <span className="text-xs font-black text-slate-600">AED</span>
                     <div className={`text-2xl sm:text-3xl font-black tracking-tight tabular-nums ${
                       isDeficit ? 'text-rose-700' : 'text-slate-950'
                     }`}>
@@ -121,7 +121,7 @@ export function ProjectGrid({ summaries }: ProjectGridProps) {
                   </div>
 
                   {/* Utilization Progress Bar */}
-                  <div className="mt-3 w-full bg-slate-200 rounded-full h-2 overflow-hidden border border-slate-300">
+                  <div className="mt-3 w-full bg-slate-200/70 rounded-full h-1.5 overflow-hidden">
                     <div 
                       className={`h-full rounded-full transition-all duration-500 ${
                         isDeficit ? 'bg-rose-600' : (spentRatio > 85 ? 'bg-amber-500' : 'bg-emerald-600')
@@ -132,9 +132,9 @@ export function ProjectGrid({ summaries }: ProjectGridProps) {
                 </div>
 
                 {/* Sub Stats with NumberFlow */}
-                <div className="mt-4 grid grid-cols-2 gap-3 border-t-2 border-slate-200 pt-3 text-xs font-mono">
+                <div className="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-3 text-xs font-mono">
                   <div>
-                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-700 block whitespace-nowrap">Funds Inflow</span>
+                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-600 block whitespace-nowrap">Funds Inflow</span>
                     <div className="flex items-center gap-1 font-black text-emerald-800 text-sm mt-0.5 whitespace-nowrap">
                       <span>AED</span>
                       <NumberFlow
@@ -145,7 +145,7 @@ export function ProjectGrid({ summaries }: ProjectGridProps) {
                     </div>
                   </div>
                   <div>
-                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-700 block whitespace-nowrap">Total Spent</span>
+                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-600 block whitespace-nowrap">Total Spent</span>
                     <div className="flex items-center gap-1 font-black text-slate-950 text-sm mt-0.5 whitespace-nowrap">
                       <span>AED</span>
                       <NumberFlow
@@ -159,7 +159,7 @@ export function ProjectGrid({ summaries }: ProjectGridProps) {
 
                 {/* Pending Invoices Pill */}
                 {summary.pendingBillsCount > 0 && (
-                  <div className="mt-3 flex items-center justify-between rounded-xl bg-amber-100 p-2.5 text-xs font-bold text-amber-950 border-2 border-amber-300 whitespace-nowrap gap-2">
+                  <div className="mt-3 flex items-center justify-between rounded-xl bg-amber-50 p-2.5 text-xs font-bold text-amber-950 border border-amber-200/80 whitespace-nowrap gap-2">
                     <div className="flex items-center gap-1.5 min-w-0 truncate">
                       <AlertCircle className="h-4 w-4 shrink-0 text-amber-700" />
                       <span className="truncate"><NumberFlow locales="en-US" value={summary.pendingBillsCount} /> unsubmitted bills</span>
@@ -172,7 +172,32 @@ export function ProjectGrid({ summaries }: ProjectGridProps) {
               </div>
 
               {/* Action Toolbar */}
-              <div className="mt-5 flex items-center justify-between border-t-2 border-slate-200 pt-3.5 whitespace-nowrap">
+              <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-3.5 whitespace-nowrap">
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/transactions/new?projectId=${summary.project.id}&mode=fund`}
+                    className="inline-flex items-center gap-1 rounded-xl bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-emerald-700 transition-all shadow-xs cursor-pointer whitespace-nowrap"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    Inflow
+                  </Link>
+                  <Link
+                    href={`/transactions/new?projectId=${summary.project.id}&mode=expense`}
+                    className="inline-flex items-center gap-1 rounded-xl bg-rose-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-rose-700 transition-all shadow-xs cursor-pointer whitespace-nowrap"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    Expense
+                  </Link>
+                </div>
+
+                <Link
+                  href={`/projects/${summary.project.id}`}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3 py-1.5 text-xs font-bold text-white hover:bg-slate-800 transition-colors shadow-xs whitespace-nowrap"
+                >
+                  <span>Ledger</span>
+                  <ArrowUpRight className="h-3.5 w-3.5 text-slate-300" />
+                </Link>
+              </div>
                 <div className="flex items-center gap-2">
                   <Link
                     href={`/transactions/new?projectId=${summary.project.id}&mode=fund`}

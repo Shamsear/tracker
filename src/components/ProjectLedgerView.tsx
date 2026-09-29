@@ -446,9 +446,10 @@ export function ProjectLedgerView({
                       />
                     </div>
                     {!isFund && row.vat_amount > 0 && (
-                      <span className="block text-[11px] font-bold text-slate-700 whitespace-nowrap">
-                        Base: {row.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} + VAT: {row.vat_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </span>
+                      <div className="flex items-center justify-end gap-1.5 text-[11px] font-bold text-slate-700 whitespace-nowrap mt-0.5">
+                        <span>Base: AED <NumberFlow locales="en-US" value={row.amount} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} /></span>
+                        <span className="text-emerald-800 font-black">+VAT: AED <NumberFlow locales="en-US" value={row.vat_amount} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} /></span>
+                      </div>
                     )}
                   </div>
                 </div>

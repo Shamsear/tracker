@@ -82,54 +82,54 @@ export function ProjectLedgerView({
     <div className="space-y-6">
       
       {/* Top Header & Breadcrumb */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs min-w-0">
+        <div className="flex items-center gap-3 min-w-0">
           <Link
             href="/"
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-100 text-slate-800 hover:bg-slate-200 hover:text-slate-950 transition-colors shadow-2xs"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-100 text-slate-800 hover:bg-slate-200 hover:text-slate-950 transition-colors shadow-2xs"
             aria-label="Back to overview"
           >
             <ArrowLeft className="h-5 w-5" />
           </Link>
-          <div>
-            <div className="flex items-center gap-2.5">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
               <span 
-                className="h-3.5 w-3.5 rounded-full shadow-xs ring-2 ring-slate-100" 
+                className="h-3.5 w-3.5 rounded-full shrink-0 shadow-xs ring-2 ring-slate-100" 
                 style={{ backgroundColor: project.color || '#2563eb' }}
               />
-              <h1 className="text-2xl font-black tracking-tight text-slate-950 uppercase">
+              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950 uppercase truncate">
                 {project.name}
               </h1>
-              <span className="rounded-lg bg-slate-100 px-2.5 py-0.5 text-xs font-black uppercase tracking-wider text-slate-700">
+              <span className="rounded-lg bg-slate-100 px-2.5 py-0.5 text-xs font-black uppercase tracking-wider text-slate-700 shrink-0">
                 {project.category}
               </span>
             </div>
-            <p className="text-xs font-bold text-slate-500 mt-0.5">
+            <p className="text-xs font-bold text-slate-500 mt-0.5 truncate">
               Synced from Sheet: {project.sheetName || project.name}
             </p>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           <a
             href={`/api/export?projectId=${project.id}`}
             download
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-bold text-slate-800 hover:bg-slate-100 transition-colors shadow-2xs"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-bold text-slate-800 hover:bg-slate-100 transition-colors shadow-2xs shrink-0"
           >
             <FileSpreadsheet className="h-4 w-4 text-emerald-700" />
             <span>Export Sheet (.xlsx)</span>
           </a>
           <Link
             href={`/transactions/new?projectId=${project.id}&mode=fund`}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-black text-white hover:bg-emerald-700 transition-all shadow-xs"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-black text-white hover:bg-emerald-700 transition-all shadow-xs shrink-0"
           >
             <ArrowDownLeft className="h-4 w-4" />
             <span>+ Receive Inflow</span>
           </Link>
           <Link
             href={`/transactions/new?projectId=${project.id}&mode=expense`}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 px-4 py-2 text-xs font-black text-white hover:bg-rose-700 transition-all shadow-xs"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 px-3.5 py-2 text-xs font-black text-white hover:bg-rose-700 transition-all shadow-xs shrink-0"
           >
             <ArrowUpRight className="h-4 w-4" />
             <span>+ Record Expense</span>
@@ -138,18 +138,18 @@ export function ProjectLedgerView({
       </div>
 
       {/* KPI Stats Strip */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Available Balance */}
-        <div className={`rounded-2xl border p-4 shadow-xs ${
+        <div className={`min-w-0 rounded-2xl border p-4 shadow-xs ${
           isHealthy ? 'border-emerald-200/90 bg-emerald-50/70' : 'border-rose-200/90 bg-rose-50/70'
         }`}>
-          <span className="text-xs font-black uppercase tracking-wider text-slate-700 block whitespace-nowrap">
+          <span className="text-xs font-black uppercase tracking-wider text-slate-700 block truncate">
             Current Balance
           </span>
-          <div className="mt-1 flex items-baseline gap-1.5 font-mono whitespace-nowrap">
-            <span className="text-xs font-black text-slate-600">AED</span>
-            <div className={`text-2xl sm:text-3xl font-black tracking-tight tabular-nums ${
+          <div className="mt-1 flex items-baseline gap-1.5 font-mono min-w-0">
+            <span className="text-xs font-black text-slate-600 shrink-0">AED</span>
+            <div className={`text-xl sm:text-2xl lg:text-3xl font-black tracking-tight tabular-nums truncate ${
               isHealthy ? 'text-emerald-800' : 'text-rose-800'
             }`}>
               <NumberFlow
@@ -159,62 +159,68 @@ export function ProjectLedgerView({
               />
             </div>
           </div>
-          <span className="mt-1 block text-xs font-bold text-slate-600 whitespace-nowrap">
+          <span className="mt-1 block text-xs font-bold text-slate-600 truncate">
             {isHealthy ? 'Available Credit' : 'Deficit / Overdrawn'}
           </span>
         </div>
 
         {/* Total Inflows */}
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs">
-          <span className="text-xs font-black uppercase tracking-wider text-slate-700 block whitespace-nowrap">
+        <div className="min-w-0 rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs">
+          <span className="text-xs font-black uppercase tracking-wider text-slate-700 block truncate">
             Total Funds Inflow
           </span>
-          <div className="mt-1 flex items-baseline gap-1.5 font-mono text-2xl sm:text-3xl font-black tracking-tight tabular-nums text-emerald-700 whitespace-nowrap">
-            <span className="text-xs font-black text-slate-600">AED</span>
-            <NumberFlow
-              locales="en-US"
-              value={summary.totalReceived}
-              format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
-            />
+          <div className="mt-1 flex items-baseline gap-1.5 font-mono min-w-0 text-xl sm:text-2xl lg:text-3xl font-black tracking-tight tabular-nums text-emerald-700">
+            <span className="text-xs font-black text-slate-600 shrink-0">AED</span>
+            <div className="truncate">
+              <NumberFlow
+                locales="en-US"
+                value={summary.totalReceived}
+                format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
+              />
+            </div>
           </div>
-          <span className="mt-1 flex items-center gap-1 text-xs font-bold text-slate-600 whitespace-nowrap">
+          <span className="mt-1 flex items-center gap-1 text-xs font-bold text-slate-600 truncate">
             <NumberFlow locales="en-US" value={summary.receiptCount} /> receipts credited
           </span>
         </div>
 
         {/* Total Spent */}
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs">
-          <span className="text-xs font-black uppercase tracking-wider text-slate-700 block whitespace-nowrap">
+        <div className="min-w-0 rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs">
+          <span className="text-xs font-black uppercase tracking-wider text-slate-700 block truncate">
             Total Spent (Inc. VAT)
           </span>
-          <div className="mt-1 flex items-baseline gap-1.5 font-mono text-2xl sm:text-3xl font-black tracking-tight tabular-nums text-slate-950 whitespace-nowrap">
-            <span className="text-xs font-black text-slate-600">AED</span>
-            <NumberFlow
-              locales="en-US"
-              value={summary.totalSpentWithVat}
-              format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
-            />
+          <div className="mt-1 flex items-baseline gap-1.5 font-mono min-w-0 text-xl sm:text-2xl lg:text-3xl font-black tracking-tight tabular-nums text-slate-950">
+            <span className="text-xs font-black text-slate-600 shrink-0">AED</span>
+            <div className="truncate">
+              <NumberFlow
+                locales="en-US"
+                value={summary.totalSpentWithVat}
+                format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
+              />
+            </div>
           </div>
-          <div className="mt-1 flex items-center justify-between gap-1 text-xs font-mono font-bold text-slate-600 whitespace-nowrap">
-            <span>Base: AED <NumberFlow locales="en-US" value={summary.totalSpentBase} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} /></span>
-            <span className="text-emerald-800">+VAT: AED <NumberFlow locales="en-US" value={summary.totalVat} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} /></span>
+          <div className="mt-1 flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5 text-xs font-mono font-bold text-slate-600">
+            <span className="truncate">Base: AED <NumberFlow locales="en-US" value={summary.totalSpentBase} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} /></span>
+            <span className="text-emerald-800 truncate">+VAT: AED <NumberFlow locales="en-US" value={summary.totalVat} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} /></span>
           </div>
         </div>
 
         {/* Pending Clearance */}
-        <div className="rounded-2xl border border-amber-200/90 bg-amber-50/70 p-4 shadow-xs">
-          <span className="text-xs font-black uppercase tracking-wider text-amber-950 block whitespace-nowrap">
+        <div className="min-w-0 rounded-2xl border border-amber-200/90 bg-amber-50/70 p-4 shadow-xs">
+          <span className="text-xs font-black uppercase tracking-wider text-amber-950 block truncate">
             Pending Bills
           </span>
-          <div className="mt-1 flex items-baseline gap-1.5 font-mono text-2xl sm:text-3xl font-black tracking-tight tabular-nums text-amber-950 whitespace-nowrap">
-            <span className="text-xs font-black text-amber-900">AED</span>
-            <NumberFlow
-              locales="en-US"
-              value={summary.pendingBillsAmount}
-              format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
-            />
+          <div className="mt-1 flex items-baseline gap-1.5 font-mono min-w-0 text-xl sm:text-2xl lg:text-3xl font-black tracking-tight tabular-nums text-amber-950">
+            <span className="text-xs font-black text-amber-900 shrink-0">AED</span>
+            <div className="truncate">
+              <NumberFlow
+                locales="en-US"
+                value={summary.pendingBillsAmount}
+                format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
+              />
+            </div>
           </div>
-          <span className="mt-1 flex items-center gap-1 text-xs font-bold text-amber-950 whitespace-nowrap">
+          <span className="mt-1 flex items-center gap-1 text-xs font-bold text-amber-950 truncate">
             <NumberFlow locales="en-US" value={summary.pendingBillsCount} /> bills unsubmitted
           </span>
         </div>

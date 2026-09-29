@@ -123,36 +123,36 @@ export function SupervisorPettyCashView({
           return (
             <div
               key={acc.id}
-              className="bg-white rounded-2xl border border-slate-200/90 p-6 flex flex-col justify-between shadow-xs hover:border-slate-400 hover:shadow-md transition-all"
+              className="bg-white rounded-2xl border border-slate-200/90 p-6 flex flex-col justify-between shadow-xs hover:border-slate-400 hover:shadow-md transition-all min-w-0"
             >
-              <div>
-                <div className="flex items-center gap-3">
+              <div className="min-w-0">
+                <div className="flex items-center gap-3 min-w-0">
                   <div 
                     className="flex h-11 w-11 items-center justify-center rounded-xl text-white shrink-0 shadow-xs"
                     style={{ backgroundColor: acc.color }}
                   >
                     <Icon className="h-5 w-5" />
                   </div>
-                  <div>
-                    <h2 className="text-base font-black tracking-tight text-slate-950 uppercase">
+                  <div className="min-w-0">
+                    <h2 className="text-base font-black tracking-tight text-slate-950 uppercase truncate">
                       {acc.title}
                     </h2>
-                    <p className="text-xs font-bold text-slate-500">
+                    <p className="text-xs font-bold text-slate-500 truncate">
                       {acc.subtitle}
                     </p>
                   </div>
                 </div>
 
                 {/* Available Balance */}
-                <div className={`mt-5 rounded-xl p-4 border transition-all ${
+                <div className={`mt-5 rounded-xl p-4 border transition-all min-w-0 ${
                   isHealthy ? 'bg-slate-50/70 border-slate-200/60' : 'bg-rose-50/60 border-rose-200/90'
                 }`}>
-                  <span className="text-xs font-black uppercase tracking-wider text-slate-600 block whitespace-nowrap">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-600 block truncate">
                     Available Float
                   </span>
-                  <div className="mt-1 flex items-baseline gap-1.5 font-mono whitespace-nowrap">
-                    <span className="text-xs font-black text-slate-600">AED</span>
-                    <div className={`text-3xl font-black tracking-tight tabular-nums ${
+                  <div className="mt-1 flex items-baseline gap-1.5 font-mono min-w-0">
+                    <span className="text-xs font-black text-slate-600 shrink-0">AED</span>
+                    <div className={`text-2xl sm:text-3xl font-black tracking-tight tabular-nums truncate ${
                       isHealthy ? 'text-slate-950' : 'text-rose-700'
                     }`}>
                       <NumberFlow
@@ -165,45 +165,49 @@ export function SupervisorPettyCashView({
                 </div>
 
                 {/* Sub Metrics */}
-                <div className="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-3 text-xs font-mono">
-                  <div>
-                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-600 block whitespace-nowrap">Float Credited</span>
-                    <div className="flex items-center gap-1 font-black text-emerald-800 text-sm mt-0.5 whitespace-nowrap">
-                      <span>AED</span>
-                      <NumberFlow
-                        locales="en-US"
-                        value={s?.totalReceived || 0}
-                        format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
-                      />
+                <div className="mt-4 grid grid-cols-2 gap-2 border-t border-slate-100 pt-3 text-xs font-mono min-w-0">
+                  <div className="min-w-0">
+                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-600 block truncate">Float Credited</span>
+                    <div className="flex items-center gap-1 font-black text-emerald-800 text-sm mt-0.5 min-w-0">
+                      <span className="shrink-0">AED</span>
+                      <span className="truncate">
+                        <NumberFlow
+                          locales="en-US"
+                          value={s?.totalReceived || 0}
+                          format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
+                        />
+                      </span>
                     </div>
                   </div>
-                  <div>
-                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-600 block whitespace-nowrap">Bills Settled</span>
-                    <div className="flex items-center gap-1 font-black text-slate-950 text-sm mt-0.5 whitespace-nowrap">
-                      <span>AED</span>
-                      <NumberFlow
-                        locales="en-US"
-                        value={s?.totalSpentWithVat || 0}
-                        format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
-                      />
+                  <div className="min-w-0">
+                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-600 block truncate">Bills Settled</span>
+                    <div className="flex items-center gap-1 font-black text-slate-950 text-sm mt-0.5 min-w-0">
+                      <span className="shrink-0">AED</span>
+                      <span className="truncate">
+                        <NumberFlow
+                          locales="en-US"
+                          value={s?.totalSpentWithVat || 0}
+                          format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
+                        />
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Actions */}
-              <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
-                <div className="flex items-center gap-2">
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-4">
+                <div className="flex flex-wrap items-center gap-1.5 shrink-0">
                   <Link
                     href={`/transactions/new?projectId=${acc.id}&mode=fund`}
-                    className="inline-flex items-center gap-1 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition-colors shadow-xs whitespace-nowrap"
+                    className="inline-flex items-center gap-1 rounded-xl bg-emerald-600 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-bold text-white hover:bg-emerald-700 transition-colors shadow-xs"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     Top-up Float
                   </Link>
                   <Link
                     href={`/transactions/new?projectId=${acc.id}&mode=expense`}
-                    className="inline-flex items-center gap-1 rounded-xl bg-rose-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-rose-700 transition-colors shadow-xs whitespace-nowrap"
+                    className="inline-flex items-center gap-1 rounded-xl bg-rose-600 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-bold text-white hover:bg-rose-700 transition-colors shadow-xs"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     Settle Bill
@@ -212,7 +216,7 @@ export function SupervisorPettyCashView({
 
                 <Link
                   href={`/projects/${acc.id}`}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-bold text-white hover:bg-slate-800 shadow-xs whitespace-nowrap"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-bold text-white hover:bg-slate-800 shadow-xs shrink-0"
                 >
                   <span>Ledger</span>
                   <ArrowUpRight className="h-4 w-4 text-slate-300" />

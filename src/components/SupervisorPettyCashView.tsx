@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import NumberFlow from '@number-flow/react';
 import { 
@@ -11,7 +11,6 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { Project, ProjectSummary } from '@/lib/ledger';
-import { TransactionModal } from './TransactionModal';
 
 interface SupervisorPettyCashViewProps {
   projects: Project[];
@@ -21,21 +20,10 @@ interface SupervisorPettyCashViewProps {
 }
 
 export function SupervisorPettyCashView({
-  projects,
   vanExpensesSummary,
   warehousePettyCashSummary,
   vanRenewalSummary,
 }: SupervisorPettyCashViewProps) {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<'fund' | 'expense'>('expense');
-  const [defaultProjectId, setDefaultProjectId] = useState<string>('warehouse-petty-cash');
-
-  const openModal = (projectId: string, mode: 'fund' | 'expense') => {
-    setDefaultProjectId(projectId);
-    setModalMode(mode);
-    setModalOpen(true);
-  };
-
   const logisticsAccounts = [
     {
       title: 'Warehouse Petty Cash',
@@ -67,7 +55,7 @@ export function SupervisorPettyCashView({
     <div className="space-y-6">
       
       {/* Header */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 uppercase">
           Supervisors & Petty Cash Float
         </h1>
@@ -87,12 +75,12 @@ export function SupervisorPettyCashView({
           return (
             <div
               key={acc.id}
-              className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col justify-between shadow-xs hover:border-slate-400 transition-all"
+              className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between shadow-xs hover:border-slate-400 transition-all"
             >
               <div>
                 <div className="flex items-center gap-3">
                   <div 
-                    className="flex h-10 w-10 items-center justify-center rounded-lg text-white shrink-0 shadow-xs"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl text-white shrink-0 shadow-xs"
                     style={{ backgroundColor: acc.color }}
                   >
                     <Icon className="h-5 w-5" />
@@ -108,7 +96,7 @@ export function SupervisorPettyCashView({
                 </div>
 
                 {/* Available Balance */}
-                <div className={`mt-5 rounded-lg p-4 border ${
+                <div className={`mt-5 rounded-xl p-4 border ${
                   isHealthy ? 'bg-slate-50 border-slate-100' : 'bg-rose-50 border-rose-200'
                 }`}>
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block">
@@ -131,15 +119,23 @@ export function SupervisorPettyCashView({
                 <div className="mt-4 grid grid-cols-2 gap-2 border-t border-slate-100 pt-3 text-xs font-mono">
                   <div>
                     <span className="text-[10px] font-semibold uppercase text-slate-400 block">Float Credited</span>
-                    <span className="font-bold text-emerald-700">
-                      AED {s?.totalReceived.toFixed(2) || '0.00'}
-                    </span>
+                    <div className="flex items-center gap-0.5 font-bold text-emerald-700">
+                      <span>AED</span>
+                      <NumberFlow
+                        value={s?.totalReceived || 0}
+                        format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
+                      />
+                    </div>
                   </div>
                   <div>
                     <span className="text-[10px] font-semibold uppercase text-slate-400 block">Bills Settled</span>
-                    <span className="font-bold text-slate-800">
-                      AED {s?.totalSpentWithVat.toFixed(2) || '0.00'}
-                    </span>
+                    <div className="flex items-center gap-0.5 font-bold text-slate-800">
+                      <span>AED</span>
+                      <NumberFlow
+                        value={s?.totalSpentWithVat || 0}
+                        format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -147,20 +143,20 @@ export function SupervisorPettyCashView({
               {/* Actions */}
               <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
                 <div className="flex items-center gap-1.5">
-                  <button
-                    onClick={() => openModal(acc.id, 'fund')}
-                    className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2.5 py-1.5 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition-colors border border-emerald-200"
+                  <Link
+                    href={`/transactions/new?projectId=${acc.id}&mode=fund`}
+                    className="inline-flex items-center gap-1 rounded-xl bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition-colors border border-emerald-200"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     Top-up Float
-                  </button>
-                  <button
-                    onClick={() => openModal(acc.id, 'expense')}
-                    className="inline-flex items-center gap-1 rounded-md bg-rose-50 px-2.5 py-1.5 text-xs font-bold text-rose-700 hover:bg-rose-100 transition-colors border border-rose-200"
+                  </Link>
+                  <Link
+                    href={`/transactions/new?projectId=${acc.id}&mode=expense`}
+                    className="inline-flex items-center gap-1 rounded-xl bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-700 hover:bg-rose-100 transition-colors border border-rose-200"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     Settle Bill
-                  </button>
+                  </Link>
                 </div>
 
                 <Link
@@ -178,7 +174,7 @@ export function SupervisorPettyCashView({
       </div>
 
       {/* Authorized Supervisors Directory */}
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-xs">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs">
         <h2 className="text-base font-bold tracking-tight text-slate-900 uppercase">
           Authorized Field Supervisors
         </h2>
@@ -196,7 +192,7 @@ export function SupervisorPettyCashView({
           ].map((sup) => (
             <div
               key={sup.name}
-              className="rounded-lg border border-slate-200 bg-slate-50 p-4 flex items-center justify-between"
+              className="rounded-xl border border-slate-200 bg-slate-50 p-4 flex items-center justify-between"
             >
               <div>
                 <span className="font-bold text-xs text-slate-900 block uppercase">
@@ -213,17 +209,6 @@ export function SupervisorPettyCashView({
           ))}
         </div>
       </div>
-
-      {/* Transaction Modal */}
-      {modalOpen && (
-        <TransactionModal
-          isOpen={modalOpen}
-          initialMode={modalMode}
-          projects={projects}
-          defaultProjectId={defaultProjectId}
-          onClose={() => setModalOpen(false)}
-        />
-      )}
 
     </div>
   );

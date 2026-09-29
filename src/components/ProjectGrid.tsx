@@ -14,10 +14,9 @@ import { ProjectSummary } from '@/lib/ledger';
 
 interface ProjectGridProps {
   summaries: ProjectSummary[];
-  onOpenAddModal: (projectId: string, mode: 'fund' | 'expense') => void;
 }
 
-export function ProjectGrid({ summaries, onOpenAddModal }: ProjectGridProps) {
+export function ProjectGrid({ summaries }: ProjectGridProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
 
@@ -45,17 +44,17 @@ export function ProjectGrid({ summaries, onOpenAddModal }: ProjectGridProps) {
             placeholder="Search projects (e.g. Sadia, Van, Listerine)..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:outline-none transition-all"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:outline-none transition-all"
           />
         </div>
 
         {/* Categories */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`rounded-xl px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+              className={`rounded-xl px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                 selectedCategory === cat
                   ? 'bg-slate-900 text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -157,7 +156,7 @@ export function ProjectGrid({ summaries, onOpenAddModal }: ProjectGridProps) {
 
                 {/* Pending Invoices Pill */}
                 {summary.pendingBillsCount > 0 && (
-                  <div className="mt-2.5 flex items-center justify-between rounded-lg bg-amber-50 p-2 text-xs font-medium text-amber-900 border border-amber-200">
+                  <div className="mt-2.5 flex items-center justify-between rounded-xl bg-amber-50 p-2 text-xs font-medium text-amber-900 border border-amber-200">
                     <div className="flex items-center gap-1.5">
                       <AlertCircle className="h-3.5 w-3.5 shrink-0 text-amber-600" />
                       <span><NumberFlow value={summary.pendingBillsCount} /> unsubmitted bills</span>
@@ -172,20 +171,20 @@ export function ProjectGrid({ summaries, onOpenAddModal }: ProjectGridProps) {
               {/* Action Toolbar */}
               <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-3">
                 <div className="flex items-center gap-1.5">
-                  <button
-                    onClick={() => onOpenAddModal(summary.project.id, 'fund')}
-                    className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition-all border border-emerald-200 cursor-pointer active:scale-95"
+                  <Link
+                    href={`/transactions/new?projectId=${summary.project.id}&mode=fund`}
+                    className="inline-flex items-center gap-1 rounded-xl bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition-all border border-emerald-200 cursor-pointer"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     Inflow
-                  </button>
-                  <button
-                    onClick={() => onOpenAddModal(summary.project.id, 'expense')}
-                    className="inline-flex items-center gap-1 rounded-lg bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700 hover:bg-rose-100 transition-all border border-rose-200 cursor-pointer active:scale-95"
+                  </Link>
+                  <Link
+                    href={`/transactions/new?projectId=${summary.project.id}&mode=expense`}
+                    className="inline-flex items-center gap-1 rounded-xl bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-700 hover:bg-rose-100 transition-all border border-rose-200 cursor-pointer"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     Expense
-                  </button>
+                  </Link>
                 </div>
 
                 <Link

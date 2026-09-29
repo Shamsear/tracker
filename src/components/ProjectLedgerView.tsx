@@ -12,7 +12,6 @@ import {
   Trash2
 } from 'lucide-react';
 import { Project, ProjectLedgerRow, ProjectSummary } from '@/lib/ledger';
-import { TransactionModal } from './TransactionModal';
 import { updateExpenseStatus, deleteTransaction } from '@/lib/actions';
 
 interface ProjectLedgerViewProps {
@@ -26,19 +25,11 @@ export function ProjectLedgerView({
   project,
   summary,
   ledger,
-  allProjects,
 }: ProjectLedgerViewProps) {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<'fund' | 'expense'>('expense');
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<'all' | 'fund' | 'expense'>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
-
-  const openModal = (mode: 'fund' | 'expense') => {
-    setModalMode(mode);
-    setModalOpen(true);
-  };
 
   const handleStatusChange = async (expenseId: string, currentStatus: string) => {
     const sequence = ['Pending To Submit', 'Submitted', 'Approved', 'Closed'];
@@ -108,25 +99,25 @@ export function ProjectLedgerView({
           <a
             href={`/api/export?projectId=${project.id}`}
             download
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors shadow-2xs"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors"
           >
             <FileSpreadsheet className="h-4 w-4 text-emerald-600" />
             <span>Export Sheet</span>
           </a>
-          <button
-            onClick={() => openModal('fund')}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition-all shadow-xs cursor-pointer active:scale-95"
+          <Link
+            href={`/transactions/new?projectId=${project.id}&mode=fund`}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition-all shadow-xs"
           >
             <ArrowDownLeft className="h-4 w-4" />
             <span>+ Receive Inflow</span>
-          </button>
-          <button
-            onClick={() => openModal('expense')}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-rose-700 transition-all shadow-xs cursor-pointer active:scale-95"
+          </Link>
+          <Link
+            href={`/transactions/new?projectId=${project.id}&mode=expense`}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 px-4 py-2 text-xs font-bold text-white hover:bg-rose-700 transition-all shadow-xs"
           >
             <ArrowUpRight className="h-4 w-4" />
             <span>+ Record Expense</span>
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -219,7 +210,7 @@ export function ProjectLedgerView({
             placeholder="Search purpose, remarks, supervisor..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:outline-none transition-all"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:outline-none transition-all"
           />
         </div>
 
@@ -228,7 +219,7 @@ export function ProjectLedgerView({
           <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50 p-0.5">
             <button
               onClick={() => setTypeFilter('all')}
-              className={`rounded-lg px-3 py-1 text-xs font-bold uppercase tracking-wider transition-all ${
+              className={`rounded-lg px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-all ${
                 typeFilter === 'all' ? 'bg-slate-900 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -236,7 +227,7 @@ export function ProjectLedgerView({
             </button>
             <button
               onClick={() => setTypeFilter('fund')}
-              className={`rounded-lg px-3 py-1 text-xs font-bold uppercase tracking-wider transition-all ${
+              className={`rounded-lg px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-all ${
                 typeFilter === 'fund' ? 'bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -244,7 +235,7 @@ export function ProjectLedgerView({
             </button>
             <button
               onClick={() => setTypeFilter('expense')}
-              className={`rounded-lg px-3 py-1 text-xs font-bold uppercase tracking-wider transition-all ${
+              className={`rounded-lg px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-all ${
                 typeFilter === 'expense' ? 'bg-rose-600 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -492,17 +483,6 @@ export function ProjectLedgerView({
           })
         )}
       </div>
-
-      {/* Transaction Modal */}
-      {modalOpen && (
-        <TransactionModal
-          isOpen={modalOpen}
-          initialMode={modalMode}
-          projects={allProjects}
-          defaultProjectId={project.id}
-          onClose={() => setModalOpen(false)}
-        />
-      )}
 
     </div>
   );

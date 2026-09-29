@@ -11,6 +11,8 @@ import {
   Sparkles
 } from 'lucide-react';
 import { createNewProject } from '@/lib/actions';
+import { CustomSelect } from '@/components/ui/CustomSelect';
+
 
 const COLOR_OPTIONS = [
   '#2563eb', // Blue
@@ -121,20 +123,20 @@ export function CreateProjectView() {
         {/* Category & Color Picker */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
-            <label className="block text-xs font-black uppercase tracking-wider text-slate-800">
+            <label className="block text-xs font-black uppercase tracking-wider text-slate-800 mb-1.5">
               Account Category *
             </label>
-            <select
+            <CustomSelect
+              options={CATEGORIES.map((cat) => ({
+                value: cat,
+                label: cat,
+                badge: cat === 'Project' ? 'Core' : undefined,
+              }))}
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs font-bold text-slate-950 focus:border-slate-800 focus:outline-none min-h-[46px]"
-            >
-              {CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
+              onChange={(val) => setCategory(val)}
+              placeholder="Select category..."
+              searchPlaceholder="Search category..."
+            />
           </div>
 
           <div>

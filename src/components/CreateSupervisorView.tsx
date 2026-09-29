@@ -9,6 +9,8 @@ import {
   AlertCircle 
 } from 'lucide-react';
 import { createSupervisor } from '@/lib/actions';
+import { CustomSelect } from '@/components/ui/CustomSelect';
+
 
 const ROLES = [
   'Field Supervisor',
@@ -120,20 +122,20 @@ export function CreateSupervisorView() {
           </div>
 
           <div>
-            <label className="block text-xs font-black uppercase tracking-wider text-slate-800">
+            <label className="block text-xs font-black uppercase tracking-wider text-slate-800 mb-1.5">
               Assigned Role
             </label>
-            <select
+            <CustomSelect
+              options={ROLES.map((r) => ({
+                value: r,
+                label: r,
+                badge: r.includes('Supervisor') ? 'Lead' : undefined,
+              }))}
               value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs font-bold text-slate-950 focus:border-slate-800 focus:outline-none min-h-[46px]"
-            >
-              {ROLES.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
+              onChange={(val) => setRole(val)}
+              placeholder="Select role..."
+              searchPlaceholder="Search role..."
+            />
           </div>
         </div>
 

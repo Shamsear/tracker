@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import NumberFlow from '@number-flow/react';
@@ -18,6 +18,8 @@ import {
 } from 'lucide-react';
 import { Project } from '@/lib/ledger';
 import { recordFundReceipt, recordExpense } from '@/lib/actions';
+import { CustomSelect } from '@/components/ui/CustomSelect';
+
 
 interface TransactionFormViewProps {
   projects: Project[];
@@ -165,23 +167,24 @@ export function TransactionFormView({ projects }: TransactionFormViewProps) {
         {/* Project Selector & Date */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
-            <label className="block text-xs font-black uppercase tracking-wider text-slate-800">
+            <label className="block text-xs font-black uppercase tracking-wider text-slate-800 mb-1.5">
               Project Account *
             </label>
-            <select
+            <CustomSelect
+              options={projects.map((p) => ({
+                value: p.id,
+                label: p.name,
+                description: `Sheet: ${p.sheetName || p.name}`,
+                badge: p.category,
+                color: p.color || '#2563eb',
+              }))}
               value={projectId}
-              onChange={(e) => setProjectId(e.target.value)}
-              required
-              className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs font-bold text-slate-950 focus:border-slate-800 focus:outline-none min-h-[46px]"
-            >
-              {projects.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name} ({p.category})
-                </option>
-              ))}
-            </select>
+              onChange={(val) => setProjectId(val)}
+              placeholder="Search or select project account..."
+              searchPlaceholder="Type project name or sheet..."
+            />
             {selectedProject && (
-              <span className="mt-1 block text-[11px] font-mono font-bold text-slate-500">
+              <span className="mt-1.5 block text-[11px] font-mono font-bold text-slate-500">
                 Sheet: {selectedProject.sheetName || selectedProject.name}
               </span>
             )}
@@ -295,17 +298,19 @@ export function TransactionFormView({ projects }: TransactionFormViewProps) {
               </div>
 
               <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-slate-800">
+                <label className="block text-xs font-black uppercase tracking-wider text-slate-800 mb-1.5">
                   VAT Rate
                 </label>
-                <select
-                  value={vatRate}
-                  onChange={(e) => setVatRate(parseFloat(e.target.value))}
-                  className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs font-mono font-bold text-slate-950 focus:border-slate-800 focus:outline-none min-h-[48px]"
-                >
-                  <option value={0.05}>5% (Standard UAE VAT)</option>
-                  <option value={0.00}>0% (VAT Exempt)</option>
-                </select>
+                <CustomSelect
+                  options={[
+                    { value: '0.05', label: '5% (Standard UAE VAT)', badge: 'Standard 5%' },
+                    { value: '0', label: '0% (VAT Exempt)', badge: 'Zero VAT' },
+                  ]}
+                  value={String(vatRate)}
+                  onChange={(val) => setVatRate(parseFloat(val))}
+                  placeholder="Select VAT rate..."
+                  searchPlaceholder="Search VAT rate..."
+                />
               </div>
             </div>
 
@@ -336,19 +341,21 @@ export function TransactionFormView({ projects }: TransactionFormViewProps) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-slate-800">
+                <label className="block text-xs font-black uppercase tracking-wider text-slate-800 mb-1.5">
                   Bill Status
                 </label>
-                <select
+                <CustomSelect
+                  options={[
+                    { value: 'Pending To Submit', label: 'Pending To Submit', badge: 'Pending' },
+                    { value: 'Submitted', label: 'Submitted', badge: 'Review' },
+                    { value: 'Approved', label: 'Approved', badge: 'Approved' },
+                    { value: 'Closed', label: 'Closed', badge: 'Cleared' },
+                  ]}
                   value={billStatus}
-                  onChange={(e) => setBillStatus(e.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs font-bold text-slate-950 focus:border-slate-800 focus:outline-none min-h-[46px]"
-                >
-                  <option value="Pending To Submit">Pending To Submit</option>
-                  <option value="Submitted">Submitted</option>
-                  <option value="Approved">Approved</option>
-                  <option value="Closed">Closed</option>
-                </select>
+                  onChange={(val) => setBillStatus(val)}
+                  placeholder="Select bill status..."
+                  searchPlaceholder="Filter statuses..."
+                />
               </div>
 
               <div>

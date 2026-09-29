@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { Project, ProjectLedgerRow, ProjectSummary } from '@/lib/ledger';
 import { updateExpenseStatus, deleteTransaction } from '@/lib/actions';
+import { CustomSelect } from '@/components/ui/CustomSelect';
+
 
 interface ProjectLedgerViewProps {
   project: Project;
@@ -248,17 +250,22 @@ export function ProjectLedgerView({
           </div>
 
           {/* Status Filter */}
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-slate-800 transition-all"
-          >
-            <option value="all">Status: All</option>
-            <option value="Pending To Submit">Pending To Submit</option>
-            <option value="Submitted">Submitted</option>
-            <option value="Approved">Approved</option>
-            <option value="Closed">Closed</option>
-          </select>
+          <div className="w-44">
+            <CustomSelect
+              options={[
+                { value: 'all', label: 'Status: All', badge: 'All' },
+                { value: 'Pending To Submit', label: 'Pending To Submit', badge: 'Pending' },
+                { value: 'Submitted', label: 'Submitted', badge: 'Submitted' },
+                { value: 'Approved', label: 'Approved', badge: 'Approved' },
+                { value: 'Closed', label: 'Closed', badge: 'Closed' },
+              ]}
+              value={statusFilter}
+              onChange={(val) => setStatusFilter(val)}
+              placeholder="Status: All"
+              searchPlaceholder="Filter statuses..."
+              buttonClassName="!py-2 !min-h-[38px] text-xs font-bold"
+            />
+          </div>
         </div>
       </div>
 

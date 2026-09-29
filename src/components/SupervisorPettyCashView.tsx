@@ -55,19 +55,19 @@ export function SupervisorPettyCashView({
     <div className="space-y-6">
       
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-white p-5 rounded-2xl border-2 border-slate-300 shadow-sm">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-950 uppercase">
             Supervisors & Petty Cash Float
           </h1>
-          <p className="mt-1 text-xs font-bold text-slate-600">
+          <p className="mt-1 text-xs font-bold text-slate-500">
             Manage operational cash floats, vehicle daily disbursements, and supervisor bill clearances.
           </p>
         </div>
 
         <Link
           href="/supervisors/new"
-          className="inline-flex items-center gap-1.5 rounded-xl bg-slate-950 px-4 py-2.5 text-xs font-black text-white hover:bg-slate-800 transition-all shadow-sm shrink-0 cursor-pointer"
+          className="inline-flex items-center gap-1.5 rounded-xl bg-slate-950 px-4 py-2.5 text-xs font-black text-white hover:bg-slate-800 transition-all shadow-xs shrink-0 cursor-pointer"
         >
           <Plus className="h-4 w-4 text-emerald-400" />
           <span>+ Add Supervisor</span>
@@ -85,12 +85,12 @@ export function SupervisorPettyCashView({
           return (
             <div
               key={acc.id}
-              className="bg-white rounded-2xl border-2 border-slate-300 p-6 flex flex-col justify-between shadow-sm hover:border-slate-500 hover:shadow-md transition-all"
+              className="bg-white rounded-2xl border border-slate-200/90 p-6 flex flex-col justify-between shadow-xs hover:border-slate-400 hover:shadow-md transition-all"
             >
               <div>
                 <div className="flex items-center gap-3">
                   <div 
-                    className="flex h-11 w-11 items-center justify-center rounded-xl text-white shrink-0 shadow-sm"
+                    className="flex h-11 w-11 items-center justify-center rounded-xl text-white shrink-0 shadow-xs"
                     style={{ backgroundColor: acc.color }}
                   >
                     <Icon className="h-5 w-5" />
@@ -99,21 +99,21 @@ export function SupervisorPettyCashView({
                     <h2 className="text-base font-black tracking-tight text-slate-950 uppercase">
                       {acc.title}
                     </h2>
-                    <p className="text-xs font-bold text-slate-600">
+                    <p className="text-xs font-bold text-slate-500">
                       {acc.subtitle}
                     </p>
                   </div>
                 </div>
 
                 {/* Available Balance */}
-                <div className={`mt-5 rounded-xl p-4 border-2 ${
-                  isHealthy ? 'bg-slate-50 border-slate-200' : 'bg-rose-50 border-rose-300'
+                <div className={`mt-5 rounded-xl p-4 border transition-all ${
+                  isHealthy ? 'bg-slate-50/70 border-slate-200/60' : 'bg-rose-50/60 border-rose-200/90'
                 }`}>
-                  <span className="text-xs font-black uppercase tracking-wider text-slate-700 block whitespace-nowrap">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-600 block whitespace-nowrap">
                     Available Float
                   </span>
                   <div className="mt-1 flex items-baseline gap-1.5 font-mono whitespace-nowrap">
-                    <span className="text-xs font-black text-slate-700">AED</span>
+                    <span className="text-xs font-black text-slate-600">AED</span>
                     <div className={`text-3xl font-black tracking-tight tabular-nums ${
                       isHealthy ? 'text-slate-950' : 'text-rose-700'
                     }`}>
@@ -127,9 +127,9 @@ export function SupervisorPettyCashView({
                 </div>
 
                 {/* Sub Metrics */}
-                <div className="mt-4 grid grid-cols-2 gap-3 border-t-2 border-slate-200 pt-3 text-xs font-mono">
+                <div className="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-3 text-xs font-mono">
                   <div>
-                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-700 block whitespace-nowrap">Float Credited</span>
+                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-600 block whitespace-nowrap">Float Credited</span>
                     <div className="flex items-center gap-1 font-black text-emerald-800 text-sm mt-0.5 whitespace-nowrap">
                       <span>AED</span>
                       <NumberFlow
@@ -140,7 +140,7 @@ export function SupervisorPettyCashView({
                     </div>
                   </div>
                   <div>
-                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-700 block whitespace-nowrap">Bills Settled</span>
+                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-600 block whitespace-nowrap">Bills Settled</span>
                     <div className="flex items-center gap-1 font-black text-slate-950 text-sm mt-0.5 whitespace-nowrap">
                       <span>AED</span>
                       <NumberFlow
@@ -154,7 +154,7 @@ export function SupervisorPettyCashView({
               </div>
 
               {/* Actions */}
-              <div className="mt-6 flex items-center justify-between border-t-2 border-slate-200 pt-4">
+              <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
                 <div className="flex items-center gap-2">
                   <Link
                     href={`/transactions/new?projectId=${acc.id}&mode=fund`}
@@ -187,11 +187,11 @@ export function SupervisorPettyCashView({
       </div>
 
       {/* Authorized Supervisors Directory */}
-      <div className="rounded-2xl border-2 border-slate-300 bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs">
         <h2 className="text-base font-black tracking-tight text-slate-950 uppercase">
           Authorized Field Supervisors
         </h2>
-        <p className="text-xs font-bold text-slate-600 mt-0.5">
+        <p className="text-xs font-bold text-slate-500 mt-0.5">
           Personnel authorized to receive petty cash disbursements and submit project invoices.
         </p>
 
@@ -205,17 +205,17 @@ export function SupervisorPettyCashView({
           ].map((sup) => (
             <div
               key={sup.name}
-              className="rounded-xl border-2 border-slate-300 bg-slate-50 p-4 flex items-center justify-between"
+              className="rounded-xl border border-slate-200/80 bg-slate-50/60 p-4 flex items-center justify-between"
             >
               <div>
                 <span className="font-black text-xs text-slate-950 block uppercase">
                   {sup.name}
                 </span>
-                <span className="text-[11px] text-slate-700 font-bold block mt-0.5">
+                <span className="text-[11px] text-slate-600 font-bold block mt-0.5">
                   {sup.role}
                 </span>
               </div>
-              <span className="font-mono text-xs font-black text-slate-900 bg-slate-200 px-2 py-1 rounded-lg border border-slate-300">
+              <span className="font-mono text-xs font-black text-slate-800 bg-slate-100 px-2 py-1 rounded-lg border border-slate-200">
                 {sup.phone}
               </span>
             </div>

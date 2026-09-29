@@ -15,9 +15,17 @@ export const prisma =
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
 export async function ensureDbSeeded() {
-  const count = await prisma.project.count();
-  if (count === 0) {
-    await seedFromInitialData();
+  try {
+    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes('ep-your-database')) {
+      console.warn('DATABASE_URL is not set or using placeholder.');
+      return;
+    }
+    const count = await prisma.project.count();
+    if (count === 0) {
+      await seedFromInitialData();
+    }
+  } catch (err: any) {
+    console.warn('Database seeding check skipped (DB may be offline during build):', err.message);
   }
 }
 

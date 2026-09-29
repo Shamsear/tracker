@@ -1,10 +1,17 @@
 import { NextResponse } from 'next/server';
 import * as XLSX from 'xlsx';
 import { getAllProjects, getProjectLedger, getGlobalDashboardStats } from '@/lib/ledger';
+import { getSession } from '@/lib/auth';
 
 export async function GET(request: Request) {
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized access' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
+
     const projectId = searchParams.get('projectId');
 
     const wb = XLSX.utils.book_new();

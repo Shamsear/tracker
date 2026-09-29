@@ -2,6 +2,42 @@
 
 import { prisma, seedFromInitialData } from './db';
 import { revalidatePath } from 'next/cache';
+import { authenticateUser, createSessionToken, setSessionCookie, clearSessionCookie, getSession } from './auth';
+
+export async function loginAction(formData: FormData) {
+  try {
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
+    if (!email || !password) {
+      return { success: false, error: 'Email and password are required' };
+    }
+
+    const { user, error } = await authenticateUser(email, password);
+    if (!user || error) {
+      return { success: false, error: error || 'Invalid email or password' };
+    }
+
+    const token = await createSessionToken(user);
+    await setSessionCookie(token);
+
+    return { success: true, user: { email: user.email, name: user.name, role: user.role } };
+  } catch (err: unknown) {
+    console.error('Login action error:', err instanceof Error ? err.message : String(err));
+    return { success: false, error: 'An error occurred during authentication' };
+  }
+}
+
+export async function logoutAction() {
+  await clearSessionCookie();
+  revalidatePath('/');
+  return { success: true };
+}
+
+export async function getCurrentUserAction() {
+  return await getSession();
+}
+
 
 export async function recordFundReceipt(data: {
   projectId: string;

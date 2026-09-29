@@ -11,9 +11,13 @@ import {
   ArrowUpRight,
   Download,
   LayoutDashboard,
-  Users
+  Users,
+  LogOut,
+  UserCheck
 } from 'lucide-react';
 import { Project } from '@/lib/ledger';
+import { logoutAction } from '@/lib/actions';
+import { useRouter } from 'next/navigation';
 
 interface NavigationProps {
   projects?: Project[];
@@ -21,7 +25,26 @@ interface NavigationProps {
 
 export function Navigation({ projects }: NavigationProps = {}) {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Do not render top navigation on login page
+  if (pathname === '/login') {
+    return null;
+  }
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logoutAction();
+      router.push('/login');
+      router.refresh();
+    } catch {
+      setIsLoggingOut(false);
+    }
+  };
+
 
   const navLinks = [
     { label: 'Master Overview', href: '/', icon: LayoutDashboard },
@@ -76,7 +99,7 @@ export function Navigation({ projects }: NavigationProps = {}) {
           <a
             href="/api/export"
             download
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800 px-3.5 py-2 text-xs font-bold text-white hover:bg-slate-700 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-xs font-bold text-white hover:bg-slate-700 transition-colors"
           >
             <Download className="h-3.5 w-3.5 text-slate-300" />
             <span>Export Excel</span>
@@ -84,19 +107,29 @@ export function Navigation({ projects }: NavigationProps = {}) {
 
           <Link
             href="/transactions/new?mode=fund"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500 px-4 py-2 text-xs font-black text-slate-950 hover:bg-emerald-400 transition-all shadow-sm"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500 px-3.5 py-2 text-xs font-black text-slate-950 hover:bg-emerald-400 transition-all shadow-sm"
           >
             <ArrowDownLeft className="h-4 w-4" />
-            <span>+ Receive Inflow</span>
+            <span>+ Inflow</span>
           </Link>
 
           <Link
             href="/transactions/new?mode=expense"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 px-4 py-2 text-xs font-black text-white hover:bg-rose-700 transition-all shadow-sm"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 px-3.5 py-2 text-xs font-black text-white hover:bg-rose-700 transition-all shadow-sm"
           >
             <ArrowUpRight className="h-4 w-4" />
-            <span>+ Record Expense</span>
+            <span>+ Expense</span>
           </Link>
+
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            title="Sign Out"
+            className="inline-flex items-center justify-center rounded-xl border border-slate-800 bg-slate-950/60 p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 hover:border-slate-700 transition-all ml-1 cursor-pointer"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
         </div>
 
         {/* Mobile Menu Button */}
@@ -159,6 +192,20 @@ export function Navigation({ projects }: NavigationProps = {}) {
                 <ArrowUpRight className="h-4 w-4" />
                 Expense
               </Link>
+            </div>
+
+            <div className="border-t border-slate-800 pt-2">
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handleLogout();
+                }}
+                disabled={isLoggingOut}
+                className="w-full flex items-center justify-center gap-2 rounded-xl border border-slate-800 bg-slate-950/60 py-2.5 text-xs font-semibold text-rose-400 hover:bg-slate-800 transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Sign Out</span>
+              </button>
             </div>
           </div>
         </div>

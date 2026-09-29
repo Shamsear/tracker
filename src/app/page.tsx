@@ -14,21 +14,21 @@ export default async function HomePage() {
     <div className="space-y-6">
       
       {/* Top Banner */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-white p-5 rounded-2xl border border-slate-300 shadow-sm">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 uppercase">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-950 uppercase">
             Master Accounts Overview
           </h1>
-          <p className="text-xs font-medium text-slate-500 mt-0.5">
+          <p className="text-sm font-semibold text-slate-600 mt-1">
             Real-time project fund allocations, live available credits, and expense ledger
           </p>
         </div>
 
         {/* Action Tool Bar */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           <Link
             href="/projects/new"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-bold text-white hover:bg-slate-800 transition-all shadow-xs"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-slate-950 px-4 py-2.5 text-xs font-bold text-white hover:bg-slate-800 transition-all shadow-sm"
           >
             <FolderPlus className="h-4 w-4 text-emerald-400" />
             <span>+ New Project</span>
@@ -37,10 +37,10 @@ export default async function HomePage() {
           <a
             href="/api/export"
             download
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors shadow-2xs"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-slate-100 px-4 py-2.5 text-xs font-bold text-slate-900 hover:bg-slate-200 transition-colors shadow-2xs"
           >
-            <Download className="h-4 w-4 text-slate-500" />
-            <span>Export Excel</span>
+            <Download className="h-4 w-4 text-slate-700" />
+            <span>Export Excel (.xlsx)</span>
           </a>
         </div>
       </div>

@@ -66,11 +66,11 @@ export function ProjectLedgerView({
     <div className="space-y-6">
       
       {/* Top Header & Breadcrumb */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-white p-5 rounded-2xl border-2 border-slate-300 shadow-sm">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
         <div className="flex items-center gap-3">
           <Link
             href="/"
-            className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-slate-300 bg-slate-100 text-slate-800 hover:bg-slate-200 hover:text-slate-950 transition-colors shadow-2xs"
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-100 text-slate-800 hover:bg-slate-200 hover:text-slate-950 transition-colors shadow-2xs"
             aria-label="Back to overview"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -78,17 +78,17 @@ export function ProjectLedgerView({
           <div>
             <div className="flex items-center gap-2.5">
               <span 
-                className="h-4 w-4 rounded-full shadow-xs border border-slate-300" 
+                className="h-3.5 w-3.5 rounded-full shadow-xs ring-2 ring-slate-100" 
                 style={{ backgroundColor: project.color || '#2563eb' }}
               />
               <h1 className="text-2xl font-black tracking-tight text-slate-950 uppercase">
                 {project.name}
               </h1>
-              <span className="rounded-lg bg-slate-200 border border-slate-300 px-2.5 py-0.5 text-xs font-black uppercase tracking-wider text-slate-900">
+              <span className="rounded-lg bg-slate-100 px-2.5 py-0.5 text-xs font-black uppercase tracking-wider text-slate-700">
                 {project.category}
               </span>
             </div>
-            <p className="text-xs font-bold text-slate-600 mt-0.5">
+            <p className="text-xs font-bold text-slate-500 mt-0.5">
               Synced from Sheet: {project.sheetName || project.name}
             </p>
           </div>
@@ -99,21 +99,21 @@ export function ProjectLedgerView({
           <a
             href={`/api/export?projectId=${project.id}`}
             download
-            className="inline-flex items-center gap-1.5 rounded-xl border-2 border-slate-300 bg-slate-100 px-4 py-2 text-xs font-bold text-slate-900 hover:bg-slate-200 transition-colors shadow-2xs"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-bold text-slate-800 hover:bg-slate-100 transition-colors shadow-2xs"
           >
             <FileSpreadsheet className="h-4 w-4 text-emerald-700" />
             <span>Export Sheet (.xlsx)</span>
           </a>
           <Link
             href={`/transactions/new?projectId=${project.id}&mode=fund`}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-black text-white hover:bg-emerald-700 transition-all shadow-sm"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-black text-white hover:bg-emerald-700 transition-all shadow-xs"
           >
             <ArrowDownLeft className="h-4 w-4" />
             <span>+ Receive Inflow</span>
           </Link>
           <Link
             href={`/transactions/new?projectId=${project.id}&mode=expense`}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 px-4 py-2 text-xs font-black text-white hover:bg-rose-700 transition-all shadow-sm"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 px-4 py-2 text-xs font-black text-white hover:bg-rose-700 transition-all shadow-xs"
           >
             <ArrowUpRight className="h-4 w-4" />
             <span>+ Record Expense</span>
@@ -125,14 +125,14 @@ export function ProjectLedgerView({
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         
         {/* Available Balance */}
-        <div className={`rounded-2xl border-2 p-4 shadow-sm ${
-          isHealthy ? 'border-emerald-300 bg-emerald-50' : 'border-rose-300 bg-rose-50'
+        <div className={`rounded-2xl border p-4 shadow-xs ${
+          isHealthy ? 'border-emerald-200/90 bg-emerald-50/70' : 'border-rose-200/90 bg-rose-50/70'
         }`}>
-          <span className="text-xs font-black uppercase tracking-wider text-slate-900 block whitespace-nowrap">
+          <span className="text-xs font-black uppercase tracking-wider text-slate-700 block whitespace-nowrap">
             Current Balance
           </span>
           <div className="mt-1 flex items-baseline gap-1.5 font-mono whitespace-nowrap">
-            <span className="text-xs font-black text-slate-700">AED</span>
+            <span className="text-xs font-black text-slate-600">AED</span>
             <div className={`text-2xl sm:text-3xl font-black tracking-tight tabular-nums ${
               isHealthy ? 'text-emerald-800' : 'text-rose-800'
             }`}>
@@ -143,50 +143,50 @@ export function ProjectLedgerView({
               />
             </div>
           </div>
-          <span className="mt-1 block text-xs font-bold text-slate-700 whitespace-nowrap">
+          <span className="mt-1 block text-xs font-bold text-slate-600 whitespace-nowrap">
             {isHealthy ? 'Available Credit' : 'Deficit / Overdrawn'}
           </span>
         </div>
 
         {/* Total Inflows */}
-        <div className="rounded-2xl border-2 border-slate-300 bg-white p-4 shadow-sm">
-          <span className="text-xs font-black uppercase tracking-wider text-slate-900 block whitespace-nowrap">
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs">
+          <span className="text-xs font-black uppercase tracking-wider text-slate-700 block whitespace-nowrap">
             Total Funds Inflow
           </span>
           <div className="mt-1 flex items-baseline gap-1.5 font-mono text-2xl sm:text-3xl font-black tracking-tight tabular-nums text-emerald-700 whitespace-nowrap">
-            <span className="text-xs font-black text-slate-700">AED</span>
+            <span className="text-xs font-black text-slate-600">AED</span>
             <NumberFlow
               locales="en-US"
               value={summary.totalReceived}
               format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
             />
           </div>
-          <span className="mt-1 flex items-center gap-1 text-xs font-bold text-slate-700 whitespace-nowrap">
+          <span className="mt-1 flex items-center gap-1 text-xs font-bold text-slate-600 whitespace-nowrap">
             <NumberFlow locales="en-US" value={summary.receiptCount} /> receipts credited
           </span>
         </div>
 
         {/* Total Spent */}
-        <div className="rounded-2xl border-2 border-slate-300 bg-white p-4 shadow-sm">
-          <span className="text-xs font-black uppercase tracking-wider text-slate-900 block whitespace-nowrap">
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs">
+          <span className="text-xs font-black uppercase tracking-wider text-slate-700 block whitespace-nowrap">
             Total Spent (Inc. VAT)
           </span>
           <div className="mt-1 flex items-baseline gap-1.5 font-mono text-2xl sm:text-3xl font-black tracking-tight tabular-nums text-slate-950 whitespace-nowrap">
-            <span className="text-xs font-black text-slate-700">AED</span>
+            <span className="text-xs font-black text-slate-600">AED</span>
             <NumberFlow
               locales="en-US"
               value={summary.totalSpentWithVat}
               format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
             />
           </div>
-          <div className="mt-1 flex items-center justify-between gap-1 text-xs font-mono font-bold text-slate-700 whitespace-nowrap">
+          <div className="mt-1 flex items-center justify-between gap-1 text-xs font-mono font-bold text-slate-600 whitespace-nowrap">
             <span>Base: AED <NumberFlow locales="en-US" value={summary.totalSpentBase} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} /></span>
             <span className="text-emerald-800">+VAT: AED <NumberFlow locales="en-US" value={summary.totalVat} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} /></span>
           </div>
         </div>
 
         {/* Pending Clearance */}
-        <div className="rounded-2xl border-2 border-amber-300 bg-amber-50 p-4 shadow-sm">
+        <div className="rounded-2xl border border-amber-200/90 bg-amber-50/70 p-4 shadow-xs">
           <span className="text-xs font-black uppercase tracking-wider text-amber-950 block whitespace-nowrap">
             Pending Bills
           </span>
@@ -206,25 +206,25 @@ export function ProjectLedgerView({
       </div>
 
       {/* Filters Toolbar */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-white p-4 rounded-2xl border-2 border-slate-300 shadow-sm">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <input
             type="text"
             placeholder="Search purpose, remarks, supervisor..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-xl border-2 border-slate-300 bg-white py-2.5 pl-10 pr-3 text-xs font-bold text-slate-950 placeholder:text-slate-500 focus:border-slate-900 focus:outline-none transition-all"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pl-10 pr-3 text-xs font-bold text-slate-950 placeholder:text-slate-400 focus:border-slate-800 focus:bg-white focus:outline-none transition-all"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Type Filter */}
-          <div className="flex items-center rounded-xl border-2 border-slate-300 bg-slate-100 p-0.5">
+          <div className="flex items-center rounded-xl border border-slate-200 bg-slate-100/70 p-0.5">
             <button
               onClick={() => setTypeFilter('all')}
               className={`rounded-lg px-3 py-1.5 text-xs font-black uppercase tracking-wider transition-all ${
-                typeFilter === 'all' ? 'bg-slate-950 text-white shadow-xs' : 'text-slate-800 hover:text-slate-950'
+                typeFilter === 'all' ? 'bg-slate-950 text-white shadow-xs' : 'text-slate-700 hover:text-slate-950'
               }`}
             >
               ALL
@@ -232,7 +232,7 @@ export function ProjectLedgerView({
             <button
               onClick={() => setTypeFilter('fund')}
               className={`rounded-lg px-3 py-1.5 text-xs font-black uppercase tracking-wider transition-all ${
-                typeFilter === 'fund' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-800 hover:text-slate-950'
+                typeFilter === 'fund' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-700 hover:text-slate-950'
               }`}
             >
               INFLOWS
@@ -240,7 +240,7 @@ export function ProjectLedgerView({
             <button
               onClick={() => setTypeFilter('expense')}
               className={`rounded-lg px-3 py-1.5 text-xs font-black uppercase tracking-wider transition-all ${
-                typeFilter === 'expense' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-800 hover:text-slate-950'
+                typeFilter === 'expense' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-700 hover:text-slate-950'
               }`}
             >
               EXPENSES
@@ -251,7 +251,7 @@ export function ProjectLedgerView({
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-xl border-2 border-slate-300 bg-white px-3.5 py-2 text-xs font-bold text-slate-900 focus:outline-none focus:border-slate-900 transition-all"
+            className="rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-slate-800 transition-all"
           >
             <option value="all">Status: All</option>
             <option value="Pending To Submit">Pending To Submit</option>
@@ -263,9 +263,9 @@ export function ProjectLedgerView({
       </div>
 
       {/* Ledger Table (Desktop) */}
-      <div className="hidden md:block overflow-x-auto rounded-2xl border-2 border-slate-300 bg-white shadow-sm">
+      <div className="hidden md:block overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-xs">
         <table className="w-full text-left text-xs">
-          <thead className="border-b-2 border-slate-300 bg-slate-100 font-black uppercase text-[11px] tracking-wider text-slate-900">
+          <thead className="border-b border-slate-200 bg-slate-50 font-black uppercase text-[11px] tracking-wider text-slate-700">
             <tr>
               <th className="py-4 px-4">Date</th>
               <th className="py-4 px-4">Purpose / Description</th>

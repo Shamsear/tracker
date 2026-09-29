@@ -100,23 +100,72 @@ export async function createNewProject(data: {
   category: string;
   color?: string;
   description?: string;
+  initialFund?: number;
 }) {
   const db = getDb();
-  const id = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  let id = data.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  if (!id) id = `proj-${Date.now()}`;
+
+  // Check if ID exists
+  const existing = db.prepare('SELECT id FROM projects WHERE id = ?').get(id);
+  if (existing) {
+    id = `${id}-${Date.now().toString().slice(-4)}`;
+  }
 
   db.prepare(`
-    INSERT INTO projects (id, name, code, category, color, description)
-    VALUES (@id, @name, @code, @category, @color, @description)
+    INSERT INTO projects (id, name, code, category, sheet_name, color, description)
+    VALUES (@id, @name, @code, @category, @sheetName, @color, @description)
   `).run({
     id,
-    name: data.name,
+    name: data.name.trim(),
     code: id.toUpperCase().replace(/-/g, '_'),
     category: data.category || 'Project',
+    sheetName: data.name.trim(),
     color: data.color || '#2563eb',
     description: data.description || null,
   });
 
+  // If initial fund provided, record opening inflow
+  if (data.initialFund && data.initialFund > 0) {
+    const fundId = `fund-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    db.prepare(`
+      INSERT INTO fund_receipts (id, project_id, amount, received_date, received_from, notes)
+      VALUES (@id, @projectId, @amount, @receivedDate, @receivedFrom, @notes)
+    `).run({
+      id: fundId,
+      projectId: id,
+      amount: Number(data.initialFund),
+      receivedDate: new Date().toISOString().split('T')[0],
+      receivedFrom: 'Opening Balance Deposit',
+      notes: 'Initial Project Float',
+    });
+  }
+
   revalidatePath('/');
+  return { success: true, id };
+}
+
+export async function createSupervisor(data: {
+  name: string;
+  phone?: string;
+  role?: string;
+  notes?: string;
+}) {
+  const db = getDb();
+  const id = `sup-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+
+  db.prepare(`
+    INSERT INTO supervisors (id, name, phone, role, notes)
+    VALUES (@id, @name, @phone, @role, @notes)
+  `).run({
+    id,
+    name: data.name.trim(),
+    phone: data.phone?.trim() || null,
+    role: data.role?.trim() || 'Field Supervisor',
+    notes: data.notes?.trim() || null,
+  });
+
+  revalidatePath('/supervisors');
   return { success: true, id };
 }
 

@@ -55,13 +55,23 @@ export function SupervisorPettyCashView({
     <div className="space-y-6">
       
       {/* Header */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 uppercase">
-          Supervisors & Petty Cash Float
-        </h1>
-        <p className="mt-1 text-xs font-medium text-slate-500">
-          Manage operational cash floats, vehicle daily disbursements, and supervisor bill clearances.
-        </p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 uppercase">
+            Supervisors & Petty Cash Float
+          </h1>
+          <p className="mt-1 text-xs font-medium text-slate-500">
+            Manage operational cash floats, vehicle daily disbursements, and supervisor bill clearances.
+          </p>
+        </div>
+
+        <Link
+          href="/supervisors/new"
+          className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white hover:bg-slate-800 transition-all shadow-xs shrink-0"
+        >
+          <Plus className="h-4 w-4 text-emerald-400" />
+          <span>+ Add Supervisor</span>
+        </Link>
       </div>
 
       {/* Logistics Cards Grid */}

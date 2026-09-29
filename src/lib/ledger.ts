@@ -81,17 +81,27 @@ export interface GlobalDashboardStats {
 }
 
 export async function getAllProjects(): Promise<Project[]> {
-  await ensureDbSeeded();
-  return prisma.project.findMany({
-    orderBy: { name: 'asc' },
-  });
+  try {
+    await ensureDbSeeded();
+    return await prisma.project.findMany({
+      orderBy: { name: 'asc' },
+    });
+  } catch (err) {
+    console.error('Error in getAllProjects:', err);
+    return [];
+  }
 }
 
 export async function getProjectById(id: string): Promise<Project | null> {
-  await ensureDbSeeded();
-  return prisma.project.findUnique({
-    where: { id },
-  });
+  try {
+    await ensureDbSeeded();
+    return await prisma.project.findUnique({
+      where: { id },
+    });
+  } catch (err) {
+    console.error(`Error in getProjectById(${id}):`, err);
+    return null;
+  }
 }
 
 export async function getProjectLedger(projectId: string): Promise<{

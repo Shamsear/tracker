@@ -75,20 +75,20 @@ export function CreateProjectView() {
     <div className="mx-auto max-w-2xl space-y-6">
       
       {/* Top Header */}
-      <div className="flex items-center gap-3 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+      <div className="flex items-center gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs min-w-0">
         <button
           type="button"
           onClick={() => router.back()}
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-100/70 text-slate-800 hover:bg-slate-200 transition-colors shadow-2xs cursor-pointer"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-100/70 text-slate-800 hover:bg-slate-200 transition-colors shadow-2xs cursor-pointer"
           aria-label="Back"
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
-        <div>
-          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950 uppercase">
+        <div className="min-w-0">
+          <h1 className="text-lg sm:text-2xl font-black tracking-tight text-slate-950 uppercase truncate">
             Create New Project Account
           </h1>
-          <p className="text-xs font-bold text-slate-500 mt-0.5">
+          <p className="text-xs font-bold text-slate-500 mt-0.5 truncate">
             Add a new client account, marketing campaign, or operational ledger
           </p>
         </div>
@@ -218,18 +218,18 @@ export function CreateProjectView() {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-end gap-3 border-t border-slate-100 pt-6">
+        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 border-t border-slate-100 pt-6">
           <button
             type="button"
             onClick={() => router.back()}
-            className="rounded-xl px-5 py-3 text-xs font-bold text-slate-600 hover:bg-slate-100 min-h-[46px] cursor-pointer"
+            className="w-full sm:w-auto rounded-xl px-5 py-3 text-xs font-bold text-slate-600 hover:bg-slate-100 min-h-[46px] cursor-pointer text-center"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex items-center gap-2 rounded-xl bg-slate-950 px-7 py-3 text-xs font-black text-white hover:bg-slate-800 shadow-xs transition-all disabled:opacity-50 min-h-[46px] cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-7 py-3 text-xs font-black text-white hover:bg-slate-800 shadow-xs transition-all disabled:opacity-50 min-h-[46px] cursor-pointer"
           >
             <Check className="h-4 w-4" />
             <span>{isSubmitting ? 'Creating Project...' : 'Create Project Account'}</span>

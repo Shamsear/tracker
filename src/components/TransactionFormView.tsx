@@ -111,51 +111,51 @@ export function TransactionFormView({ projects }: TransactionFormViewProps) {
     <div className="mx-auto max-w-3xl space-y-6">
       
       {/* Top Header & Breadcrumb */}
-      <div className="flex items-center justify-between bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs min-w-0">
+        <div className="flex items-center gap-3 min-w-0">
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-100/70 text-slate-800 hover:bg-slate-200 transition-colors shadow-2xs cursor-pointer"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-100/70 text-slate-800 hover:bg-slate-200 transition-colors shadow-2xs cursor-pointer"
             aria-label="Back"
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950 uppercase">
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-2xl font-black tracking-tight text-slate-950 uppercase truncate">
               {mode === 'fund' ? 'Record Fund Inflow' : 'Record Project Expense'}
             </h1>
-            <p className="text-xs font-bold text-slate-500 mt-0.5">
+            <p className="text-xs font-bold text-slate-500 mt-0.5 truncate">
               {mode === 'fund' ? 'Credit funds into project ledger' : 'Deduct expense & compute 5% UAE VAT'}
             </p>
           </div>
         </div>
 
         {/* Mode Switcher */}
-        <div className="flex items-center rounded-xl border border-slate-200 bg-slate-100/70 p-1">
+        <div className="flex items-center rounded-xl border border-slate-200 bg-slate-100/70 p-1 w-full sm:w-auto shrink-0">
           <button
             type="button"
             onClick={() => setMode('expense')}
-            className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
               mode === 'expense'
                 ? 'bg-rose-600 text-white shadow-xs'
                 : 'text-slate-700 hover:text-slate-950'
             }`}
           >
             <ArrowUpRight className="h-4 w-4" />
-            Expense
+            <span>Expense</span>
           </button>
           <button
             type="button"
             onClick={() => setMode('fund')}
-            className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
               mode === 'fund'
                 ? 'bg-emerald-600 text-white shadow-xs'
                 : 'text-slate-700 hover:text-slate-950'
             }`}
           >
             <ArrowDownLeft className="h-4 w-4" />
-            Inflow
+            <span>Inflow</span>
           </button>
         </div>
       </div>
@@ -197,8 +197,8 @@ export function TransactionFormView({ projects }: TransactionFormViewProps) {
             )}
           </div>
 
-          <div>
-            <div className="flex items-center justify-between">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center justify-between gap-1">
               <label className="block text-xs font-black uppercase tracking-wider text-slate-800">
                 {mode === 'fund' ? 'Date & Time Received *' : 'Expense Date & Time *'}
               </label>
@@ -405,18 +405,18 @@ export function TransactionFormView({ projects }: TransactionFormViewProps) {
         )}
 
         {/* Form Action Buttons */}
-        <div className="flex items-center justify-end gap-3 border-t border-slate-100 pt-6">
+        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 border-t border-slate-100 pt-6">
           <button
             type="button"
             onClick={() => router.back()}
-            className="rounded-xl px-5 py-3 text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors min-h-[46px] cursor-pointer"
+            className="w-full sm:w-auto rounded-xl px-5 py-3 text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors min-h-[46px] cursor-pointer text-center"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`inline-flex items-center gap-2 rounded-xl px-7 py-3 text-xs font-black text-white shadow-xs transition-all disabled:opacity-50 min-h-[46px] cursor-pointer ${
+            className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-7 py-3 text-xs font-black text-white shadow-xs transition-all disabled:opacity-50 min-h-[46px] cursor-pointer ${
               mode === 'fund'
                 ? 'bg-emerald-600 hover:bg-emerald-700'
                 : 'bg-rose-600 hover:bg-rose-700'
